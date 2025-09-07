@@ -7,4 +7,4 @@ yarn-error.log
 .env
 
 # Firebase keys
-src/config/*.json
+src/config/firebaseServicekey.json
