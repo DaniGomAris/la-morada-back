@@ -1,3 +1,4 @@
+// Modelo de datos para una cita
 class Appointment {
   constructor({ id, patientID, psychologistID, date, status = "pendiente", createdAt = new Date(), notes = "" }) {
     this.id = id;
@@ -9,6 +10,7 @@ class Appointment {
     this.notes = notes;
   }
 
+  // Convierte la cita a un objeto plano para la base de datos
   toDict() {
     return {
       patientID: this.patientID,

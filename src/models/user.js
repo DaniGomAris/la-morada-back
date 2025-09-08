@@ -1,3 +1,4 @@
+// Modelo de datos para un usuario
 class User {
   constructor(email, name, last_name1, last_name2, age, password, role, phone) {
     this.email = email;
@@ -11,6 +12,7 @@ class User {
     this.createdAt = new Date();
   }
 
+  // Convierte el usuario a un objeto plano para la base de datos
   toDict() {
     return {
       email: this.email,

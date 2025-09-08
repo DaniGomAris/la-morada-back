@@ -2,7 +2,7 @@
 node_modules/
 
 # Logs
-logs
+logs/
 *.log
 npm-debug.log*
 yarn-debug.log*
@@ -12,9 +12,11 @@ yarn-error.log*
 .env
 .env.local
 .env.*.local
+.env.production
 
 # Firebase service account keys
-firebase_Key.json
+firebase_key.json
+/etc/secrets/firebase_key.json   # si usas ruta en producción
 
 # Jest coverage
 coverage/
@@ -33,6 +35,6 @@ Thumbs.db
 *.sublime-project
 *.sublime-workspace
 
-# Optional: NPM package lock (if you want to ignore)
+# NPM/Yarn lock files (opcional)
 package-lock.json
 yarn.lock

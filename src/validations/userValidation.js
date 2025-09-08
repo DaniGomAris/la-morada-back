@@ -1,3 +1,4 @@
+// Expresiones regulares para validar cada campo del usuario
 const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}(?:\.[a-zA-Z]{2,})*$/;
 const nameRegex = /^[a-zA-Z]+$/;
 const ageRegex = /^[0-9]{1,2}$/;
@@ -5,6 +6,7 @@ const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[@$!%*?&])[A-Za-z0
 const phoneRegex = /^[0-9]{7,15}$/;
 const roles = ["patient", "psychologist", "admin"];
 
+// Valida los datos de un usuario
 function validateUser(data) {
   if (!emailRegex.test(data.email)) throw new Error("Email inválido");
   if (!nameRegex.test(data.name)) throw new Error("Nombre inválido");
@@ -14,6 +16,7 @@ function validateUser(data) {
   if (!passwordRegex.test(data.password)) throw new Error("Contraseña inválida");
   if (!phoneRegex.test(data.phone)) throw new Error("Teléfono inválido");
 
+  // Validación del rol (por defecto patient si no se proporciona)
   if (!roles.includes(data.role || "patient")) {
     throw new Error("Rol inválido");
   }
