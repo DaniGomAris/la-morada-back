@@ -12,12 +12,10 @@ router.post("/register", validateUserMiddleware, UserController.register);
 // Con email y password
 router.post("/login", UserController.login);
 
-// Obtener todos los usuarios
-// Solo psychologist o admin
+// Obtener todos los usuarios (solo psychologist o admin)
 router.get("/", UserController.getAll);
 
-// Obtener todos los usuarios
-// No importa el rol
+// Obtener todos los usuarios (no importa el rol)
 router.get("/all", UserController.getAllUsers);
 
 

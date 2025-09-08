@@ -9,10 +9,8 @@ const app = express();
 app.use(express.json());
 
 // Rutas de la API
-// Rutas de usuarios
-app.use("/api/users", userRoutes);
+app.use("/api/users", userRoutes); // Rutas de usuarios
 
-// Rutas de citas
-app.use("/api/appointments", appointmentRoutes);
+app.use("/api/appointments", appointmentRoutes); // Rutas de citas
 
 module.exports = app;

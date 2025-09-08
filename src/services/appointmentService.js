@@ -15,7 +15,6 @@ class AppointmentService {
     const patientRef = await db.collection("users").doc(data.patientID).get();
     const psychologistRef = await db.collection("users").doc(data.psychologistID).get();
 
-    // Verifica existencia de los usuarios
     if (!patientRef.exists) throw new Error("El paciente no existe");
     if (!psychologistRef.exists) throw new Error("El psicólogo no existe");
 
@@ -56,7 +55,7 @@ class AppointmentService {
   }
 
 
-  // Obtener citas por usuario (paciente o psicólogo)
+  // Obtener citas por usuario (patien o psychologist)
   static async getAppointmentsByUser(userId, role) {
     let query = db.collection("appointments");
 
@@ -83,10 +82,8 @@ class AppointmentService {
     if (data.status) updates.status = data.status;
     if (data.notes) updates.notes = data.notes;
 
-    // Aplica las actualizaciones
     await ref.update(updates);
 
-    // Obtiene la cita actualizada
     const updatedDoc = await ref.get();
     return { id: updatedDoc.id, ...updatedDoc.data() };
   }
@@ -100,7 +97,6 @@ class AppointmentService {
     const doc = await ref.get();
     if (!doc.exists) throw new Error("La cita no existe");
 
-    // Elimina la cita de firestore
     await ref.delete();
     return { message: "Cita eliminada correctamente" };
   }

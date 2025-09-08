@@ -14,7 +14,7 @@ class UserController {
   // Registrar un nuevo usuario (solo psychologist o admin)
   static async register(req, res) {
     try {
-      const { role } = req.body; // Se asume que el rol del usuario que hace la petición viene en el body
+      const { role } = req.body; // El rol del usuario que hace la petición viene en el body
 
       // Valida que el rol sea psychologist o admin
       if (role !== "psychologist" && role !== "admin") {
