@@ -1,4 +1,3 @@
-// src/middlewares/userMiddlewares.js
 const { validateUser } = require("../validations/userValidation");
 
 function validateUserMiddleware(req, res, next) {
