@@ -16,4 +16,9 @@ router.post("/login", UserController.login);
 // Solo psychologist o admin
 router.get("/", UserController.getAll);
 
+// Obtener todos los usuarios
+// No importa el rol
+router.get("/all", UserController.getAllUsers);
+
+
 module.exports = router;

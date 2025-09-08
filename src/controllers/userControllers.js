@@ -62,6 +62,17 @@ class UserController {
       res.status(500).json({ error: error.message });
     }
   }
+
+  // Obtener todos los usuarios sin filtrar por rol (acceso libre o admin según tu decisión)
+  static async getAllUsers(req, res) {
+    try {
+      const users = await UserService.getUsers(); // Obtiene todos los usuarios
+      res.status(200).json(users);
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
+  }
+
 }
 
 module.exports = UserController;
