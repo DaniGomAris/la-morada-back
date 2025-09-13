@@ -24,7 +24,6 @@ class UserService {
     return { message: "Usuario registrado con éxito", userId: docRef.id };
   }
 
-
   // Iniciar sesion
   static async login(email, password) {
     const snapshot = await db.collection("users").where("email", "==", email).get();
