@@ -1,16 +1,23 @@
 const express = require("express");
 const router = express.Router();
 
-const { registerUserController } = require("./user-controller");
-const { getUsersController } = require("./user-controller");
+const {
+  registerUserController,
+  updateUserController,
+  getUsersController
+} = require("./user-controller");
 
 const { authenticateJWT } = require("../../middlewares/jwt-middleware");
 const { authorizeRoles } = require("../../middlewares/role-middleware");
 
-// Solo admin
+// Registrar usuario
 router.post("/register", registerUserController);
 
-// Listar usuarios (solo admin)
-router.get("/", authenticateJWT, authorizeRoles(["admin"]), getUsersController);
+// Obtener usuarios (solo psychologist)
+router.get("/", authenticateJWT, authorizeRoles(["psychologist"]), getUsersController);
+
+// Aztualizar usuario
+router.put("/:id", authenticateJWT, authorizeRoles(["psychologist", "admin"]), updateUserController);
+
 
 module.exports = router;

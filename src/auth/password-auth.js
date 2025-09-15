@@ -15,7 +15,6 @@ async function hashPassword(password) {
   return await argon2.hash(password, argon2Options);
 }
 
-
 // Verifica si la contraseña coincide con el hash
 async function verifyPassword(hashedPassword, plainPassword) {
   try {

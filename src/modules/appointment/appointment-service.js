@@ -1,48 +1,60 @@
-// services/appointment.service.js
 const Appointment = require("./models/appointment");
-const User = require("../user/models/user");
+const { validateAppointment } = require("./validators/appointment-validator");
 
+// Crear cita
 async function createAppointment(data) {
-  try {
-    const { patientID, psychologistID, date, notes } = data;
+  await validateAppointment(data);
 
-    // 1. Validaciones de campos requeridos
-    if (!patientID) throw new Error("El campo 'patientID' es obligatorio");
-    if (!psychologistID) throw new Error("El campo 'psychologistID' es obligatorio");
-    if (!date) throw new Error("El campo 'date' es obligatorio");
+  const appointment = new Appointment({
+    patientID: data.patientID,
+    psychologistID: data.psychologistID,
+    date: new Date(data.date),
+    notes: data.notes,
+    status: data.status || "pendiente",
+  });
 
-    // 2. Validar que paciente existe
-    const patient = await User.findById(patientID);
-    if (!patient) throw new Error(`No se encontró paciente con cédula ${patientID}`);
-    if (patient.role !== "user")
-      throw new Error("El 'patientID' debe pertenecer a un usuario con rol 'user'");
-
-    // 3. Validar que psicólogo existe
-    const psychologist = await User.findById(psychologistID);
-    if (!psychologist) throw new Error(`No se encontró psicólogo con cédula ${psychologistID}`);
-    if (psychologist.role !== "admin")
-      throw new Error("El 'psychologistID' debe pertenecer a un usuario con rol 'psychologist'");
-
-    // 4. Validar fecha futura
-    const appointmentDate = new Date(date);
-    if (isNaN(appointmentDate)) throw new Error("Formato de fecha inválido");
-    if (appointmentDate < new Date())
-      throw new Error("La fecha de la cita debe ser en el futuro");
-
-    // 5. Crear cita
-    const appointment = new Appointment({
-      patientID,
-      psychologistID,
-      date: appointmentDate,
-      notes,
-    });
-
-    await appointment.save();
-    return { success: true, message: "Cita creada exitosamente", appointment };
-  } catch (error) {
-    console.error("Error en createAppointment:", error.message);
-    return { success: false, message: error.message };
-  }
+  await appointment.save();
+  return appointment;
 }
 
-module.exports = { createAppointment };
+// Editar cita
+async function updateAppointment(id, data) {
+  const appointment = await Appointment.findById(id);
+  if (!appointment) throw new Error("Cita no encontrada");
+
+  // Validar datos (si se cambia patientID, psychologistID o date)
+  await validateAppointment({ ...appointment.toObject(), ...data });
+
+  // Actualizar campos
+  ["patientID", "psychologistID", "date", "notes", "status"].forEach(field => {
+    if (data[field] !== undefined) appointment[field] = data[field];
+  });
+
+  await appointment.save();
+  return appointment;
+}
+
+// Eliminar cita
+async function deleteAppointment(id) {
+  const appointment = await Appointment.findByIdAndDelete(id);
+  if (!appointment) throw new Error("Cita no encontrada");
+  return appointment;
+}
+
+// Obtener citas por paciente
+async function getAppointmentsByPatient(patientID) {
+  return await Appointment.find({ patientID }).sort({ date: 1 });
+}
+
+// Obtener citas por psicólogo
+async function getAppointmentsByPsychologist(psychologistID) {
+  return await Appointment.find({ psychologistID }).sort({ date: 1 });
+}
+
+module.exports = {
+  createAppointment,
+  updateAppointment,
+  deleteAppointment,
+  getAppointmentsByPatient,
+  getAppointmentsByPsychologist,
+};

@@ -4,7 +4,6 @@ const { generateToken } = require("../../auth/jwt-auth");
 const { handleError } = require("../../handlers/error-handler")
 async function loginUser(email, password, res) {
     try {
-        // Validar credenciales
         validateLogin(email, password);
 
         // Buscar usuario
@@ -13,17 +12,15 @@ async function loginUser(email, password, res) {
             return res.status(404).json({ message: "Usuario no encontrado" });
         }
 
-        // Validar contraseña y rol
         await validatePassword(user.password, password);
-        validateRole(user.role, ["user", "admin"]);
+        validateRole(user.role, ["patient", "psychologist"]);
 
-        // Preparar objeto de usuario sin la contraseña
         const { password: _, ...userWithoutPassword } = user.toObject();
 
         // Generar JWT
         const token = generateToken(user._id.toString(), user.role);
 
-        // Seleccionar solo los campos que quieres enviar
+        // Campos que se envian
         const safeUser = {
         _id: userWithoutPassword._id,
         email: userWithoutPassword.email,

@@ -1,4 +1,4 @@
-// VAalida el rol 
+// Valida el rol 
 function authorizeRoles(roles = []) {
   return (req, res, next) => {
     if (!req.user) {
