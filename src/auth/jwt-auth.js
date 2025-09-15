@@ -1,5 +1,6 @@
 const jwt = require("jsonwebtoken");
 
+// Variables del .env
 const JWT_SECRET = process.env.JWT_SECRET_KEY;
 const JWT_EXPIRES = process.env.JWT_ACCESS_EXPIRES;
 

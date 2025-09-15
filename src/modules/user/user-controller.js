@@ -6,10 +6,7 @@ async function registerUserController(req, res) {
   try {
     const { password, rePassword, ...rest } = req.body;
 
-    // Validar que coincidan password y rePassword
-    if (password !== rePassword) {
-      return res.status(400).json({ success: false, message: "Las contraseñas no coinciden" });
-    }
+    if (password !== rePassword) throw new Error("Contraseñas no coinciden");
 
     const user = await registerUser({ ...rest, password });
     res.status(201).json({
@@ -19,7 +16,7 @@ async function registerUserController(req, res) {
       user,
     });
   } catch (err) {
-    return handleError(res, err);
+    handleError(res, err);
   }
 }
 
@@ -29,11 +26,10 @@ async function updateUserController(req, res) {
     const userId = req.params.id;
     const { password, rePassword, ...rest } = req.body;
 
-    // Validar que coincidan las contrasenas si se actualizan
-    if (password && password !== rePassword) {
-      return res.status(400).json({ success: false, message: "Las contraseñas no coinciden" });
-    }
+    // Su las contraseñas coinciden
+    if (password && password !== rePassword) throw new Error("Contraseñas no coinciden");
 
+    
     const updates = { ...rest };
     if (password) updates.password = password;
 
@@ -44,7 +40,7 @@ async function updateUserController(req, res) {
       user: updatedUser
     });
   } catch (err) {
-    return handleError(res, err);
+    handleError(res, err);
   }
 }
 
@@ -54,7 +50,7 @@ async function getUsersController(req, res) {
     const users = await getUsers();
     res.status(200).json({ success: true, status: "ok", users });
   } catch (err) {
-    return handleError(res, err);
+    handleError(res, err);
   }
 }
 

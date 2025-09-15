@@ -22,10 +22,9 @@ async function updateAppointment(id, data) {
   const appointment = await Appointment.findById(id);
   if (!appointment) throw new Error("Cita no encontrada");
 
-  // Validar datos
   await validateAppointment({ ...appointment.toObject(), ...data });
 
-  // Actualizar campos
+  // Campos que se pueden editar
   ["patientID", "psychologistID", "date", "notes", "status"].forEach(field => {
     if (data[field] !== undefined) appointment[field] = data[field];
   });

@@ -1,6 +1,6 @@
 const argon2 = require("argon2");
 
-// Valida email y password de login
+// Email y password de login
 function validateLogin(email, password) {
   if (!email || !password) throw new Error("Credenciales requeridas");
 
@@ -17,7 +17,7 @@ async function validatePassword(hash, plainPassword) {
   return true;
 }
 
-// Valida si el rol del usuario
+// Valida si el usuario tiene rol
 function validateRole(userRole, allowedRoles) {
   if (!allowedRoles.includes(userRole)) throw new Error("No autorizado");
   return true;

@@ -42,11 +42,11 @@ async function getAppointmentsController(req, res) {
   try {
     let appointments;
     if (req.user.role === "patient") {
-      appointments = await getAppointmentsByPatient(req.user._id);
+      appointments = await getAppointmentsByPatient(req.user.user_id);
     } else if (req.user.role === "psychologist") {
-      appointments = await getAppointmentsByPsychologist(req.user._id);
+      appointments = await getAppointmentsByPsychologist(req.user.user_id);
     } else {
-      return res.status(403).json({ message: "Rol no autorizado" });
+      throw new Error("No autorizado");
     }
     res.json({ success: true, appointments });
   } catch (err) {

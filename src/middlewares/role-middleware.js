@@ -1,15 +1,19 @@
-// Valida el rol 
+// Middleware para limitar ruta usando un rol valido
 function authorizeRoles(roles = []) {
   return (req, res, next) => {
-    if (!req.user) {
-      return res.status(401).json({ success: false, error: "No autenticado" });
-    }
+    try {
+      if (!req.user) {
+        throw new Error("No autenticado");
+      }
 
-    if (!roles.includes(req.user.role)) {
-      return res.status(403).json({ success: false, error: "No autorizado" });
-    }
+      if (!roles.includes(req.user.role)) {
+        throw new Error("No autorizado");
+      }
 
-    next();
+      next();
+    } catch (err) {
+      next(err);
+    }
   };
 }
 

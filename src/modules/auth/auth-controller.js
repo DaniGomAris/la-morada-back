@@ -1,9 +1,24 @@
-const { loginUser } = require("../auth/auth-service");
+const { loginUser } = require("./auth-service");
+const { handleError } = require("../../handlers/error-handler");
 
 // Iniciar sesion
-async function login(req, res) {
+async function loginController(req, res) {
+  try {
     const { email, password } = req.body;
-    return loginUser(email, password, res);
-} 
 
-module.exports = { login };
+    // Valida datos y genera JWT
+    const { user, token } = await loginUser(email, password);
+
+    res.status(200).json({
+      success: true,
+      status: "ok",
+      message: "Login exitoso",
+      user,
+      token
+    });
+  } catch (err) {
+    handleError(res, err);
+  }
+}
+
+module.exports = { loginController };

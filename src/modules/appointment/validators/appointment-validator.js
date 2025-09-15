@@ -10,6 +10,7 @@ function isValidDate(date) {
 
 // Valida los datos de una cita
 async function validateAppointment(data) {
+
   // Validar IDs
   if (!data.patientID) throw new Error("El patientID es obligatorio");
   if (!data.psychologistID) throw new Error("El psychologistID es obligatorio");
