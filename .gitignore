@@ -1,40 +1,62 @@
-# Node modules
+# Node
 node_modules/
-
-# Logs
-logs/
-*.log
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
 
 # Environment variables
 .env
 .env.local
 .env.*.local
-.env.production
 
-# Firebase service account keys
-firebase_key.json
-/etc/secrets/firebase_key.json   # si usas ruta en producción
+# Logs
+logs/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+*.log
+*.log.*
+pids/
+*.pid
+*.seed
+*.pid.lock
 
-# Jest coverage
+# Coverage
 coverage/
+*.lcov
 
-# Build folders
+# Build / Cache
 dist/
 build/
+.cache/
+.tmp/
+.out/
+
+# Mongo dump / backups
+*.bson
+*.json
+*.lock
+
+# IDE / Editor
+.vscode/
+.idea/
+*.swp
+*.swo
 
 # OS files
 .DS_Store
 Thumbs.db
 
-# IDE / Editor files
-.vscode/
-.idea/
-*.sublime-project
-*.sublime-workspace
+# Debug
+*.tgz
+*.tar.gz
 
-# NPM/Yarn lock files (opcional)
-package-lock.json
-yarn.lock
+# Postman collections/environment exports
+*.postman_collection.json
+*.postman_environment.json
+
+# Moduels
+node_modules
+
+# Notes
+notes.txt
+
+# Archives
+generate-hash.js
