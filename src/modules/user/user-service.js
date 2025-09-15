@@ -30,13 +30,13 @@ async function registerUser(data) {
 
 // Obtener todos los usuarios
 async function getUsers() {
-  const users = await User.find().lean();
+  const users = await User.find({ role: "patient" }).lean();
   return users.map(({ password, ...u }) => u);
 }
 
 // Actualizar usuario
 async function updateUser(userId, updates) {
-  const user = await User.findById(userId);
+  const users = await User.find({ role: "patient" }).lean();
   if (!user) throw new Error("Usuario no encontrado");
 
   // Validar datos combinando los actuales y los nuevos

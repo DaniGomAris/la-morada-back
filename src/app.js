@@ -18,7 +18,7 @@ connectDB();
 
 // Rutas
 app.use("/auth", authRoutes);
-app.use("/user", userRoutes);
+app.use("/users", userRoutes);
 app.use("/appointment", appointmentRoutes);
 
 // Endpoint de prueba
