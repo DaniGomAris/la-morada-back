@@ -10,14 +10,14 @@ function validateLogin(email, password) {
   return true;
 }
 
-// Valida si la contraseña ingresada coincide con el hash almacenado
+// Valida al contraseña con el hash de la base de datos
 async function validatePassword(hash, plainPassword) {
   const isValid = await argon2.verify(hash, plainPassword);
   if (!isValid) throw new Error("Contrasena incorrecta");
   return true;
 }
 
-// Valida si el rol del usuario está permitido
+// Valida si el rol del usuario
 function validateRole(userRole, allowedRoles) {
   if (!allowedRoles.includes(userRole)) throw new Error("No autorizado");
   return true;

@@ -22,7 +22,7 @@ async function updateAppointment(id, data) {
   const appointment = await Appointment.findById(id);
   if (!appointment) throw new Error("Cita no encontrada");
 
-  // Validar datos (si se cambia patientID, psychologistID o date)
+  // Validar datos
   await validateAppointment({ ...appointment.toObject(), ...data });
 
   // Actualizar campos
@@ -46,7 +46,7 @@ async function getAppointmentsByPatient(patientID) {
   return await Appointment.find({ patientID }).sort({ date: 1 });
 }
 
-// Obtener citas por psicólogo
+// Obtener citas por psicologo
 async function getAppointmentsByPsychologist(psychologistID) {
   return await Appointment.find({ psychologistID }).sort({ date: 1 });
 }

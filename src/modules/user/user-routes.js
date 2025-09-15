@@ -10,13 +10,13 @@ const {
 const { authenticateJWT } = require("../../middlewares/jwt-middleware");
 const { authorizeRoles } = require("../../middlewares/role-middleware");
 
-// Registrar usuario
+// POST users/register
 router.post("/register", registerUserController);
 
-// Obtener usuarios (solo psychologist)
+// GET users/
 router.get("/", authenticateJWT, authorizeRoles(["psychologist"]), getUsersController);
 
-// Aztualizar usuario
+// PUT users/:id
 router.put("/:id", authenticateJWT, authorizeRoles(["psychologist", "admin"]), updateUserController);
 
 

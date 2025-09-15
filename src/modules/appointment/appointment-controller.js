@@ -7,6 +7,7 @@ const {
 } = require("./appointment-service");
 const { handleError } = require("../../handlers/error-handler");
 
+// Crear cita
 async function createAppointmentController(req, res) {
   try {
     const appointment = await createAppointment(req.body);
@@ -16,6 +17,7 @@ async function createAppointmentController(req, res) {
   }
 }
 
+// Actualizar cita
 async function updateAppointmentController(req, res) {
   try {
     const appointment = await updateAppointment(req.params.id, req.body);
@@ -25,6 +27,7 @@ async function updateAppointmentController(req, res) {
   }
 }
 
+// Eliminar cita
 async function deleteAppointmentController(req, res) {
   try {
     const result = await deleteAppointment(req.params.id);
@@ -34,6 +37,7 @@ async function deleteAppointmentController(req, res) {
   }
 }
 
+// Obtener citas por usuario y por psicologo
 async function getAppointmentsController(req, res) {
   try {
     let appointments;

@@ -29,7 +29,7 @@ async function updateUserController(req, res) {
     const userId = req.params.id;
     const { password, rePassword, ...rest } = req.body;
 
-    // Validar que coincidan si se actualiza contraseña
+    // Validar que coincidan las contrasenas si se actualizan
     if (password && password !== rePassword) {
       return res.status(400).json({ success: false, message: "Las contraseñas no coinciden" });
     }

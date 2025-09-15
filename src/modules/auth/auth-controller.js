@@ -1,5 +1,6 @@
 const { loginUser } = require("../auth/auth-service");
 
+// Iniciar sesion
 async function login(req, res) {
     const { email, password } = req.body;
     return loginUser(email, password, res);

@@ -10,16 +10,16 @@ const {
   getAppointmentsController
 } = require("./appointment-controller");
 
-// Crear cita 
+// POST appointment/
 router.post("/", authenticateJWT, authorizeRoles(["patient", "psychologist"]), createAppointmentController);
 
-// Editar cita 
+// PUT appointment/:id
 router.put("/:id", authenticateJWT, authorizeRoles(["patient", "psychologist"]), updateAppointmentController);
 
-// Eliminar cita
+// DELETE appointment/:id
 router.delete("/:id", authenticateJWT, authorizeRoles(["patient", "psychologist"]), deleteAppointmentController);
 
-// Ver todas las citas
+// GET appointment/:id
 router.get("/", authenticateJWT, authorizeRoles(["patient", "psychologist"]), getAppointmentsController);
 
 module.exports = router;

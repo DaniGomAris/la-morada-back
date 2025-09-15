@@ -53,7 +53,7 @@ async function updateUser(userId, updates) {
   for (const field of allowedFields) {
     if (updates[field] !== undefined) {
       if (field === "password") {
-        user.password = await argon2.hash(updates.password); // <--- aquí
+        user.password = await argon2.hash(updates.password);
       } else {
         user[field] = updates[field];
       }

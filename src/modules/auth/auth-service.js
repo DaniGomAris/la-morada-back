@@ -2,6 +2,7 @@ const User = require("../user/models/user");
 const { validateLogin, validatePassword, validateRole } = require("./validators/auth-validator");
 const { generateToken } = require("../../auth/jwt-auth");
 const { handleError } = require("../../handlers/error-handler")
+
 async function loginUser(email, password, res) {
     try {
         validateLogin(email, password);
