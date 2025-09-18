@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const { authorizeRoles } = require("../../middlewares/role-middleware");
-const { authenticateJWT } = require("../../middlewares/jwt-middleware");
+const { validToken } = require("../../middlewares/jwt-middleware");
 
 const { 
   createAppointmentController,
@@ -10,16 +10,20 @@ const {
   getAppointmentsController
 } = require("./appointment-controller");
 
+// Create appointment
 // POST appointment/
-router.post("/", authenticateJWT, authorizeRoles(["patient", "psychologist"]), createAppointmentController);
+router.post("/", validToken, authorizeRoles(["patient", "psychologist"]), createAppointmentController);
 
+// Editar appointment
 // PUT appointment/:id
-router.put("/:id", authenticateJWT, authorizeRoles(["patient", "psychologist"]), updateAppointmentController);
+router.put("/:id", validToken, authorizeRoles(["patient", "psychologist"]), updateAppointmentController);
 
+// Eliminar appoinment
 // DELETE appointment/:id
-router.delete("/:id", authenticateJWT, authorizeRoles(["patient", "psychologist"]), deleteAppointmentController);
+router.delete("/:id", validToken, authorizeRoles(["patient", "psychologist"]), deleteAppointmentController);
 
+// Obtener citas
 // GET appointment/:id
-router.get("/", authenticateJWT, authorizeRoles(["patient", "psychologist"]), getAppointmentsController);
+router.get("/", validToken, authorizeRoles(["patient", "psychologist"]), getAppointmentsController);
 
 module.exports = router;

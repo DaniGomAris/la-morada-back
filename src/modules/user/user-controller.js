@@ -1,4 +1,4 @@
-const { registerUser, getUsers, updateUser } = require("./user-service");
+const { registerUser, getPatientUsers, getPsychologistUsers, updateUser } = require("./user-service");
 const { handleError } = require("../../handlers/error-handler");
 
 // Crear usuario
@@ -6,7 +6,7 @@ async function registerUserController(req, res) {
   try {
     const { password, rePassword, ...rest } = req.body;
 
-    if (password !== rePassword) throw new Error("Contraseñas no coinciden");
+    if (password !== rePassword) throw new Error("PASSWORD_MISMATCH");
 
     const user = await registerUser({ ...rest, password });
     res.status(201).json({
@@ -26,10 +26,8 @@ async function updateUserController(req, res) {
     const userId = req.params.id;
     const { password, rePassword, ...rest } = req.body;
 
-    // Su las contraseñas coinciden
-    if (password && password !== rePassword) throw new Error("Contraseñas no coinciden");
+    if (password && password !== rePassword) throw new Error("PASSWORD_MISMATCH");
 
-    
     const updates = { ...rest };
     if (password) updates.password = password;
 
@@ -44,10 +42,20 @@ async function updateUserController(req, res) {
   }
 }
 
-// Obtener usuarios
-async function getUsersController(req, res) {
+// Obtener usuarios con rol patient
+async function getPatientUsersController(req, res) {
   try {
-    const users = await getUsers();
+    const users = await getPatientUsers();
+    res.status(200).json({ success: true, status: "ok", users });
+  } catch (err) {
+    handleError(res, err);
+  }
+}
+
+// Obtener usuarios con rol psychologist
+async function getPsychologistUsersController(req, res) {
+  try {
+    const users = await getPsychologistUsers();
     res.status(200).json({ success: true, status: "ok", users });
   } catch (err) {
     handleError(res, err);
@@ -57,5 +65,6 @@ async function getUsersController(req, res) {
 module.exports = {
   registerUserController,
   updateUserController,
-  getUsersController,
+  getPatientUsersController,
+  getPsychologistUsersController
 };

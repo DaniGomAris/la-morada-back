@@ -1,33 +1,47 @@
-const User = require("../user/models/user");
+const User = require("../user/models/user-model");
 const { validateLogin, validatePassword, validateRole } = require("./validators/auth-validator");
-const { generateToken } = require("../../auth/jwt-auth");
+const { verifyToken, invalidateToken, generateToken } = require("../../auth/jwt-auth");
+const logger = require("../../utils/logger");
 
+// Login user
 async function loginUser(email, password) {
   validateLogin(email, password);
 
-  // Buscar usuario en la base de datos
   const user = await User.findOne({ email });
-  if (!user) throw new Error("Usuario no encontrado");
+  if (!user) {
+    logger.error(`User not found with email: ${email}`);
+    throw new Error("USER NOT FOUND");
+  }
 
   await validatePassword(user.password, password);
 
   validateRole(user.role, ["patient", "psychologist"]);
 
-  // Eliminar password para mostrarlo
   const { password: _, ...userWithoutPassword } = user.toObject();
 
-  // Generar JWT
-  const token = generateToken(user._id.toString(), user.role);
+  const token = await generateToken(user._id, user.role);
 
-  // Datos seguros para enviar
-  const safeUser = {
-    _id: userWithoutPassword._id,
-    email: userWithoutPassword.email,
-    name: userWithoutPassword.name,
-    role: userWithoutPassword.role
-  };
-
-  return { user: safeUser, token };
+  logger.info(`Login successful for user ${user._id}`);
+  return { user: userWithoutPassword, token };
 }
 
-module.exports = { loginUser };
+
+// Logout user
+async function logoutUser(token) {
+  if (!token) {
+    logger.error("Logout failed: token required");
+    throw new Error("TOKEN REQUIRED");
+  }
+
+  const decoded = await verifyToken(token);
+  if (!decoded) {
+    logger.error("Logout failed: invalid token");
+    throw new Error("INVALID TOKEN");
+  }
+
+  await invalidateToken(decoded.user_id);
+  logger.info(`Logout successful for user ${decoded.user_id}`);
+  return true;
+}
+
+module.exports = { loginUser, logoutUser };

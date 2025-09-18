@@ -1,7 +1,7 @@
 const Appointment = require("./models/appointment");
 const { validateAppointment } = require("./validators/appointment-validator");
 
-// Crear cita
+// Create appointment
 async function createAppointment(data) {
   await validateAppointment(data);
 
@@ -10,42 +10,48 @@ async function createAppointment(data) {
     psychologistID: data.psychologistID,
     date: new Date(data.date),
     notes: data.notes,
-    status: data.status || "pendiente",
+    status: data.status || "PENDIENTE",
   });
 
   await appointment.save();
   return appointment;
 }
 
-// Editar cita
+
+// Update appointment
 async function updateAppointment(id, data) {
   const appointment = await Appointment.findById(id);
-  if (!appointment) throw new Error("Cita no encontrada");
+  if (!appointment) throw new Error("APPOINTMENT NOT FOUND");
 
   await validateAppointment({ ...appointment.toObject(), ...data });
 
-  // Campos que se pueden editar
-  ["patientID", "psychologistID", "date", "notes", "status"].forEach(field => {
-    if (data[field] !== undefined) appointment[field] = data[field];
-  });
+  const allowedFields = ["patientID", "psychologistID", "date", "notes", "status"];
+  for (const field of allowedFields) {
+    if (data[field] !== undefined) {
+      appointment[field] = data[field];
+    }
+  }
 
   await appointment.save();
   return appointment;
 }
 
-// Eliminar cita
+
+// Delete an appointment
 async function deleteAppointment(id) {
   const appointment = await Appointment.findByIdAndDelete(id);
-  if (!appointment) throw new Error("Cita no encontrada");
+  if (!appointment) throw new Error("APPOINTMENT NOT FOUND");
   return appointment;
 }
 
-// Obtener citas por paciente
+
+// Get appointments by patient
 async function getAppointmentsByPatient(patientID) {
   return await Appointment.find({ patientID }).sort({ date: 1 });
 }
 
-// Obtener citas por psicologo
+
+// Get appointments by psychologist
 async function getAppointmentsByPsychologist(psychologistID) {
   return await Appointment.find({ psychologistID }).sort({ date: 1 });
 }

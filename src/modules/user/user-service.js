@@ -1,4 +1,4 @@
-const User = require("./models/user");
+const User = require("./models/user-model");
 const { validateUser } = require("./validators/user-validator");
 const { hashPassword } = require("../../auth/password-auth");
 
@@ -6,13 +6,13 @@ const { hashPassword } = require("../../auth/password-auth");
 async function registerUser(data) {
   validateUser(data);
 
-  // Verificar si ID ya eciste
+  // Verificar si ID ya existe
   const existingById = await User.findById(data._id);
-  if (existingById) throw new Error("Id ya registrado");
+  if (existingById) throw new Error("ID EXISTS");
 
-  // Verificar si email ya eciste
+  // Verificar si email ya existe
   const existingByEmail = await User.findOne({ email: data.email });
-  if (existingByEmail) throw new Error("Email ya registrado");
+  if (existingByEmail) throw new Error("EMAIL EXISTS");
 
   // Hashear contraseña
   const hashedPassword = await hashPassword(data.password);
@@ -29,34 +29,31 @@ async function registerUser(data) {
   return userWithoutPassword;
 }
 
-// Obtiene todos los usuarios con rol "patient".
-async function getUsers() {
+// Obtiene todos los usuarios con rol "patient"
+async function getPatientUsers() {
   const users = await User.find({ role: "patient" }).lean();
   return users.map(({ password, ...u }) => u);
 }
 
-// Editar un usuario existente.
+// Obtiene todos los usuarios con rol "psychologist"
+async function getPsychologistUsers() {
+  const users = await User.find({ role: "psychologist" }).lean();
+  return users.map(({ password, ...u }) => u);
+}
+
+// Editar un usuario existente
 async function updateUser(userId, updates) {
   const user = await User.findById(userId);
-  if (!user) throw new Error("Usuario no encontrado");
+  if (!user) throw new Error("USER NOT FOUND");
 
-  // Campos que se pueden actualizar
   const allowedFields = ["name", "last_name1", "last_name2", "email", "phone", "age", "password"];
-
-
   const invalidFields = Object.keys(updates).filter(field => !allowedFields.includes(field));
-  if (invalidFields.length > 0) throw new Error("No se pueden actualizar los campos");
+  if (invalidFields.length > 0) throw new Error("FIELDS NOT UPDATABLE");
 
-  // Validar datos de valores actuales y nuevos
-  const dataToValidate = {
-    ...user.toObject(),
-    ...updates,
-    password: updates.password,
-    rePassword: updates.password
-  };
+  // Validar datos actuales + actualizaciones
+  const dataToValidate = { ...user.toObject(), ...updates, password: updates.password, rePassword: updates.password };
   validateUser(dataToValidate);
 
-  // Actualizar campos permitidos
   for (const field of allowedFields) {
     if (updates[field] !== undefined) {
       if (field === "password") {
@@ -68,13 +65,13 @@ async function updateUser(userId, updates) {
   }
 
   await user.save();
-
   const { password, ...userWithoutPassword } = user.toObject();
   return userWithoutPassword;
 }
 
 module.exports = {
   registerUser,
-  getUsers,
+  getPatientUsers,
+  getPsychologistUsers,
   updateUser,
 };

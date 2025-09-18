@@ -1,14 +1,17 @@
 const mongoose = require("mongoose");
+const logger = require("../utils/logger");
+
+MONGO_URL = process.env.MONGO_URL
 
 // Conecta a MongoDB usando Mongoose
 const connectDB = async () => {
   try {
-    await mongoose.connect(process.env.MONGO_URI, {
+    await mongoose.connect(process.env.MONGO_URL, {
       dbName: process.env.DB_NAME,
     });
-    console.log("MongoDB conectado");
+    logger.info("Connected to MondoDB");
   } catch (error) {
-    console.error("Error conectando a MongoDB:", error.message);
+    logger.error("Error conectando a MongoDB:", err);
   }
 };
 

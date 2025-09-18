@@ -1,18 +1,21 @@
-// Middleware para limitar ruta usando un rol valido
+const { handleError } = require("../handlers/error-handler");
+
 function authorizeRoles(roles = []) {
   return (req, res, next) => {
     try {
       if (!req.user) {
-        throw new Error("No autenticado");
+        const err = new Error("UNAUTHORIZED");
+        return handleError(res, err);
       }
 
       if (!roles.includes(req.user.role)) {
-        throw new Error("No autorizado");
+        const err = new Error("ACCESS DENIED");
+        return handleError(res, err);
       }
 
       next();
     } catch (err) {
-      next(err);
+      handleError(res, err);
     }
   };
 }

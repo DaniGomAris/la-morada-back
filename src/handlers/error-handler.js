@@ -1,42 +1,42 @@
 function handleError(res, err) {
   const ERROR_MAP = {
-    // Errores de autenticación
-    "Credenciales requeridas": { msg: "Credenciales requeridas", status: 400 },
-    "Email inválido": { msg: "Email inválido", status: 400 },
-    "Contraseña incorrecta": { msg: "Contraseña incorrecta", status: 401 },
-    "No autorizado": { msg: "No autorizado", status: 403 },
-    "Token inválido": { msg: "Token inválido o expirado", status: 401 },
-    "Token requerido": { msg: "Token requerido", status: 401 },
+    // Auth errors
+    "MISSING CREDENTIALS": { msg: "Missing credentials", status: 400 },
+    "INVALID EMAIL": { msg: "Invalid email", status: 400 },
+    "WRONG PASSWORD": { msg: "Wrong password", status: 401 },
+    "UNAUTHORIZED": { msg: "Unauthorized", status: 403 },
+    "INVALID TOKEN": { msg: "Invalid or expired token", status: 401 },
+    "TOKEN REQUIRED": { msg: "Token required", status: 401 },
 
-    // Errores de registro o conflictos
-    "Id ya registrado": { msg: "ID ya está en uso", status: 409 },
-    "Email ya registrado": { msg: "Email ya está en uso", status: 409 },
-    "Recurso ya existe": { msg: "El recurso ya existe", status: 409 },
+    // Conflict / register errors
+    "ID EXISTS": { msg: "ID already in use", status: 409 },
+    "EMAIL EXISTS": { msg: "Email already in use", status: 409 },
+    "RESOURCE EXISTS": { msg: "Resource already exists", status: 409 },
 
-    // Errores de permisos y acceso
-    "Acceso denegado": { msg: "No tienes permisos para esta acción", status: 403 },
+    // Permission errors
+    "ACCESS DENIED": { msg: "Access denied", status: 403 },
 
-    // Errores de validación de datos
-    "Parámetros inválidos": { msg: "Parámetros inválidos en la solicitud", status: 400 },
-    "Id inválido": { msg: "Id inválido", status: 400 },
-    "Tipo de documento inválido": { msg: "Tipo de documento inválido", status: 400 },
-    "Nombre inválido": { msg: "Nombre inválido", status: 400 },
-    "Primer apellido inválido": { msg: "Primer apellido inválido", status: 400 },
-    "Segundo apellido inválido": { msg: "Segundo apellido inválido", status: 400 },
-    "Edad inválida": { msg: "Edad inválida", status: 400 },
-    "Contraseña inválida": { msg: "Contraseña inválida", status: 400 },
-    "Teléfono inválido": { msg: "Teléfono inválido", status: 400 },
-    "El patientID es obligatorio": { msg: "El patientID es obligatorio", status: 400 },
-    "El psychologistID es obligatorio": { msg: "El psychologistID es obligatorio", status: 400 },
-    "Estado de cita inválido": { msg: "Estado de cita inválido", status: 400 },
-    "No se pueden actualizar los campos": { msg: "No se pueden actualizar algunos campos del usuario", status: 400 },
+    // Validation errors
+    "INVALID PARAMS": { msg: "Invalid request params", status: 400 },
+    "INVALID ID": { msg: "Invalid ID", status: 400 },
+    "INVALID DOC TYPE": { msg: "Invalid document type", status: 400 },
+    "INVALID NAME": { msg: "Invalid name", status: 400 },
+    "INVALID LASTNAME1": { msg: "Invalid first last name", status: 400 },
+    "INVALID LASTNAME2": { msg: "Invalid second last name", status: 400 },
+    "INVALID AGE": { msg: "Invalid age", status: 400 },
+    "INVALID PASSWORD": { msg: "Invalid password", status: 400 },
+    "INVALID PHONE": { msg: "Invalid phone", status: 400 },
+    "PATIENTID REQUIRED": { msg: "PatientID required", status: 400 },
+    "PSYCHOLOGISTID REQUIRED": { msg: "PsychologistID required", status: 400 },
+    "INVALID STATUS": { msg: "Invalid status", status: 400 },
+    "FIELDS NOT UPDATABLE": { msg: "Some fields can't be updated", status: 400 },
 
-    // Errores de no encontrado
-    "Usuario no encontrado": { msg: "Usuario no encontrado", status: 404 },
-    "Cita no encontrada": { msg: "Cita no encontrada", status: 404 },
+    // Not found
+    "USER NOT FOUND": { msg: "User not found", status: 404 },
+    "APPOINTMENT NOT FOUND": { msg: "Appointment not found", status: 404 },
   };
 
-  const { msg, status } = ERROR_MAP[err.message] || { msg: "Error interno del servidor", status: 500 };
+  const { msg, status } = ERROR_MAP[err.message?.toUpperCase?.()] || { msg: "Internal server error", status: 500 };
   return res.status(status).json({ message: msg });
 }
 

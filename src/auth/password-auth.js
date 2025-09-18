@@ -1,21 +1,21 @@
 const argon2 = require("argon2");
 
-// Configuracion de seguridad
+// Security configuration
 const argon2Options = {
   type: argon2.argon2id,
-  timeCost: 3,              // Numero de iteraciones
+  timeCost: 3,              // Number of iterations
   memoryCost: 2 ** 16,      // 64 MB
-  parallelism: 2,           // Hilos
-  hashLength: 32,           // Longitud
-  saltLength: 16            // Longitud de la sal
+  parallelism: 2,           // Threads
+  hashLength: 32,           // Len
+  saltLength: 16            // Salt len
 };
 
-// Genera un hash para la contraseña
+// Generate password hash
 async function hashPassword(password) {
   return await argon2.hash(password, argon2Options);
 }
 
-// Verifica si la contraseña coincide con el hash
+// Verify the pasword matches with hash
 async function verifyPassword(hashedPassword, plainPassword) {
   try {
     return await argon2.verify(hashedPassword, plainPassword);
