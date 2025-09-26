@@ -1,5 +1,6 @@
 const { createLogger, format, transports, config } = require("winston");
 
+// Level logs
 const customLevels = {
   levels: {
     error: 0,
@@ -8,6 +9,7 @@ const customLevels = {
     http: 3,
     debug: 4,
   },
+  // Color logs
   colors: {
     error: "red",
     warn: "yellow",
@@ -19,14 +21,15 @@ const customLevels = {
 
 const logger = createLogger({
   levels: customLevels.levels,
-  level: "debug",
+  level: "debug", // Minimum level to register logs
   format: format.combine(
     format.colorize({ all: true }),
-    format.timestamp({ format: "YYYY-MM-DD HH:mm:ss" }),
+    format.timestamp({ format: "YYYY-MM-DD HH:mm:ss" }), // Timestamp
     format.printf(({ timestamp, level, message }) => {
-      return `[${timestamp}] ${level}: ${message}`;
+      return `[${timestamp}] ${level}: ${message}`; // Message format
     })
   ),
+  // Destination logs
   transports: [
     new transports.Console(),
     new transports.File({ filename: "logs/error.log", level: "error" }),

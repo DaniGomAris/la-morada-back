@@ -14,15 +14,15 @@ const {
 // POST appointment/
 router.post("/", validToken, authorizeRoles(["patient", "psychologist"]), createAppointmentController);
 
-// Editar appointment
+// Edit appointment
 // PUT appointment/:id
 router.put("/:id", validToken, authorizeRoles(["patient", "psychologist"]), updateAppointmentController);
 
-// Eliminar appoinment
+// Delete appointment
 // DELETE appointment/:id
 router.delete("/:id", validToken, authorizeRoles(["patient", "psychologist"]), deleteAppointmentController);
 
-// Obtener citas
+// Get appointment
 // GET appointment/:id
 router.get("/", validToken, authorizeRoles(["patient", "psychologist"]), getAppointmentsController);
 

@@ -37,7 +37,7 @@ async function updateAppointment(id, data) {
 }
 
 
-// Delete an appointment
+// Delete appointment
 async function deleteAppointment(id) {
   const appointment = await Appointment.findByIdAndDelete(id);
   if (!appointment) throw new Error("APPOINTMENT NOT FOUND");

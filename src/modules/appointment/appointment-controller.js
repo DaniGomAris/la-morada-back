@@ -45,9 +45,9 @@ async function deleteAppointmentController(req, res) {
 async function getAppointmentsController(req, res) {
   try {
     let appointments;
-    if (req.user.role === "PATIENT") {
+    if (req.user.role === "patient") {
       appointments = await getAppointmentsByPatient(req.user.user_id);
-    } else if (req.user.role === "PSYCHOLOGIST") {
+    } else if (req.user.role === "psychologist") {
       appointments = await getAppointmentsByPsychologist(req.user.user_id);
     } else {
       throw new Error("ACCESS DENIED");

@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 
-// Estructura de Mongoose para citas
+// Appointment estructure
 const appointmentSchema = new mongoose.Schema(
   {
     patientID: { type: String, ref: "User", required: true },

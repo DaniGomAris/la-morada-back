@@ -26,8 +26,10 @@ async function generateToken(user_id, role) {
   return token;
 }
 
+// Very token and if exists in Redis
 async function verifyToken(token) {
   try {
+    
     // Decode and verify JWT signature
     const decoded = jwt.verify(token, JWT_SECRET);
 
@@ -45,7 +47,7 @@ async function verifyToken(token) {
   }
 }
 
-// Elimina token de Redis (logout)
+// Delete token from Redis (logout)
 async function invalidateToken(user_id) {
   const redisKey = `user:${user_id}`;
 

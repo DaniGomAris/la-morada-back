@@ -35,7 +35,7 @@ app.use((err, req, res, next) => {
 
 // Test Endpoint
 app.get("/", (req, res) => {
-  res.json({ message: "Node.js API connected to MongoDB & Redis " });
+  res.json({ message: "Node.js API connected to MongoDB & Redis" });
   logger.http("GET / llamado");
 });
 
