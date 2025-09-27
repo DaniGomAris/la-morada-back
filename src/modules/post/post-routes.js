@@ -5,19 +5,19 @@ const { authorizeRoles } = require("../../middlewares/role-middleware");
 
 const router = express.Router();
 
-// Crear un post
+// Create post
 router.post("/create", validToken, authorizeRoles(["psychologist"]), PostController.createPost);
 
-// Obtener todos los posts
+// Get posts
 router.get("/", PostController.getPosts);
 
-// Obtener post por ID
+// Get posts by id
 router.get("/:id", PostController.getPostById);
 
-// Actualizar post
+// Update post
 router.put("/:id", authorizeRoles(["psychologist"]), validToken, PostController.updatePost);
 
-// Eliminar post
+// Delete post
 router.delete("/:id", authorizeRoles(["psychologist"]), validToken, PostController.deletePost);
 
 module.exports = router;

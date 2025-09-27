@@ -9,14 +9,16 @@ const logger = require("./utils/logger");
 const requestLogger = require("./middlewares/logger-middleware");
 const { handleError } = require("./handlers/error-handler");
 
-const authRoutes = require("../src/modules/auth/auth-routes");
-const userRoutes = require("../src/modules/user/user-routes");
-const appointmentRoutes = require("../src/modules/appointment/appointment-routes");
-const availabilityRoutes = require("../src/modules/availability/availability-routes");
-const productRoutes = require("../src/modules/product/product-routes");
-const cartRoutes = require("../src/modules/cart/cart-routes");
-const postRoutes = require("../src/modules/post/post-routes");
-const podcastRoutes = require("../src/modules/podcast/podcast-routes");
+const {
+  authRoutes,
+  userRoutes,
+  appointmentRoutes,
+  availabilityRoutes,
+  productRoutes,
+  cartRoutes,
+  postRoutes,
+  podcastRoutes
+} = require("./modules");
 
 const app = express();
 

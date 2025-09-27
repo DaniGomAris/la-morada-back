@@ -1,4 +1,4 @@
-const ProductModel = require("./models/product-model");
+const ProductModel = require("./models/product");
 const { validateProduct } = require("./validators/product-validator");
 const logger = require("../../utils/logger");
 
