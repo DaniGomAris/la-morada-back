@@ -11,6 +11,6 @@ router.post("/", validToken, authorizeRoles(["psychologist"]), AvailabilityContr
 router.get("/", validToken, authorizeRoles(["psychologist"]), AvailabilityController.get);
 
 // Delete availability (DELETE /availabilities/:id)
-router.delete("/:id", validToken, authorizeRoles(["psychologist"]), AvailabilityController.delete);
+router.delete("/:id", validToken, authorizeRoles(["psychologist"]), AvailabilityController.remove);
 
 module.exports = router;
