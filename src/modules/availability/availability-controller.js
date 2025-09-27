@@ -1,5 +1,6 @@
 const AvailabilityService = require("./availability-service");
 const { handleError } = require("../../handlers/error-handler");
+const logger = require("../../utils/logger");
 
 class AvailabilityController {
   // Create or update availability
@@ -11,21 +12,23 @@ class AvailabilityController {
       );
       res.status(200).json({ success: true, availability });
     } catch (err) {
+      logger.error(`AvailabilityController.upsert: ${err.message}`);
       handleError(res, err);
     }
   }
 
   // Delete availability
-  static async delete(req, res) {
+  static async remove(req, res) {
     try {
       const result = await AvailabilityService.delete(req.params.id);
       res.status(200).json({ success: true, result });
     } catch (err) {
+      logger.error(`AvailabilityController.remove: ${err.message}`);
       handleError(res, err);
     }
   }
 
-  // Get availability for a psychologist
+  // Get availability for the logged-in psychologist
   static async get(req, res) {
     try {
       const availability = await AvailabilityService.getByPsychologist(
@@ -33,6 +36,7 @@ class AvailabilityController {
       );
       res.json({ success: true, availability });
     } catch (err) {
+      logger.error(`AvailabilityController.get: ${err.message}`);
       handleError(res, err);
     }
   }

@@ -1,11 +1,10 @@
 const AppointmentService = require("./appointment-service");
 const { handleError } = require("../../handlers/error-handler");
+const logger = require("../../utils/logger"); // <-- agregado
 
 class AppointmentController {
-  // Create appointment
   static async create(req, res) {
     try {
-      // If the role is patient, force to use their own user_id
       const appointmentData = {
         patient_id: req.user.role === "patient" ? req.user.user_id : req.body.patient_id,
         psychologist_id: req.body.psychologist_id,
@@ -13,23 +12,26 @@ class AppointmentController {
       };
 
       const appointment = await AppointmentService.createAppointment(appointmentData);
+      logger.info(`AppointmentController: Appointment created for patient ${appointmentData.patient_id}`);
       res.status(201).json({ success: true, appointment });
+
     } catch (err) {
+      logger.error(`AppointmentController create failed: ${err.message}`);
       handleError(res, err);
     }
   }
 
-  // Delete appointment
   static async remove(req, res) {
     try {
       const result = await AppointmentService.deleteAppointment(req.params.id);
+      logger.info(`AppointmentController: Appointment deleted ${req.params.id}`);
       res.status(200).json({ success: true, result });
     } catch (err) {
+      logger.error(`AppointmentController remove failed: ${err.message}`);
       handleError(res, err);
     }
   }
 
-  // Get all appointments (patient or psychologist)
   static async getAll(req, res) {
     try {
       let appointments;
@@ -40,19 +42,22 @@ class AppointmentController {
       } else {
         throw new Error("ACCESS DENIED");
       }
+      logger.info(`AppointmentController: Retrieved ${appointments.length} appointments for user ${req.user.user_id}`);
       res.json({ success: true, appointments });
     } catch (err) {
+      logger.error(`AppointmentController getAll failed: ${err.message}`);
       handleError(res, err);
     }
   }
 
-  // Update the status
   static async updateStatus(req, res) {
     try {
       const { status } = req.body;
       const appointment = await AppointmentService.updateAppointmentStatus(req.params.id, req.user, status);
+      logger.info(`AppointmentController: Appointment ${req.params.id} status updated to ${status}`);
       res.status(200).json({ success: true, appointment });
     } catch (err) {
+      logger.error(`AppointmentController updateStatus failed: ${err.message}`);
       handleError(res, err);
     }
   }

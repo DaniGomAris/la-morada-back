@@ -1,62 +1,80 @@
 const Availability = require("./models/availability");
 const User = require("../user/models/user-model");
 const { validateAvailability } = require("./validators/availability-validator");
+const logger = require("../../utils/logger");
 
 class AvailabilityService {
   // Create or update availability
   static async createOrUpdate(user_id, data) {
-    // Validate availability data (does not save in DB)
-    await validateAvailability({ ...data, psychologist_id: user_id });
+    try {
+      await validateAvailability({ ...data, psychologist_id: user_id });
 
-    const user = await User.findById(user_id);
-    if (!user) throw new Error("USER NOT FOUND");
-    if (user.role !== "psychologist") throw new Error("INVALID ROLE");
+      const user = await User.findById(user_id);
+      if (!user) throw new Error("USER NOT FOUND");
+      if (user.role !== "psychologist") throw new Error("INVALID ROLE");
 
-    let availability;
+      let availability;
 
-    if (user.availability_id) {
-      // Update existing availability
-      availability = await Availability.findById(user.availability_id);
-      if (!availability) throw new Error("AVAILABILITY NOT FOUND");
+      if (user.availability_id) {
+        // Update existing availability
+        availability = await Availability.findById(user.availability_id);
+        if (!availability) throw new Error("AVAILABILITY NOT FOUND");
 
-      availability.days = data.days;
-      availability.slots = data.slots;
-      await availability.save();
-    } else {
-      // Create new availability and link to user
-      availability = new Availability({ ...data });
-      await availability.save();
+        availability.days = data.days;
+        availability.slots = data.slots;
+        await availability.save();
+        logger.info(`Availability updated for user ${user_id}`);
+      } else {
+        // Create new availability
+        availability = new Availability({ ...data });
+        await availability.save();
 
-      user.availability_id = availability._id;
-      await user.save();
+        user.availability_id = availability._id;
+        await user.save();
+        logger.info(`Availability created for user ${user_id}`);
+      }
+
+      return availability;
+    } catch (err) {
+      logger.error(`AvailabilityService.createOrUpdate: ${err.message}`);
+      throw err;
     }
-
-    return availability;
   }
 
   // Delete availability
   static async delete(id) {
-    const availability = await Availability.findByIdAndDelete(id);
-    if (!availability) throw new Error("AVAILABILITY NOT FOUND");
+    try {
+      const availability = await Availability.findByIdAndDelete(id);
+      if (!availability) throw new Error("AVAILABILITY NOT FOUND");
 
-    // Remove availability reference from user
-    const user = await User.findOne({ availability_id: id });
-    if (user) {
-      user.availability_id = null;
-      await user.save();
+      // Remove reference from user
+      const user = await User.findOne({ availability_id: id });
+      if (user) {
+        user.availability_id = null;
+        await user.save();
+      }
+
+      logger.info(`Availability ${id} deleted`);
+      return availability;
+    } catch (err) {
+      logger.error(`AvailabilityService.delete: ${err.message}`);
+      throw err;
     }
-
-    return availability;
   }
 
   // Get availability by psychologist
   static async getByPsychologist(user_id) {
-    const user = await User.findById(user_id);
-    if (!user) throw new Error("USER NOT FOUND");
+    try {
+      const user = await User.findById(user_id);
+      if (!user) throw new Error("USER NOT FOUND");
+      if (!user.availability_id) return null;
 
-    if (!user.availability_id) return null;
-
-    return await Availability.findById(user.availability_id);
+      const availability = await Availability.findById(user.availability_id);
+      return availability;
+    } catch (err) {
+      logger.error(`AvailabilityService.getByPsychologist: ${err.message}`);
+      throw err;
+    }
   }
 }
 

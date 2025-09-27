@@ -13,6 +13,8 @@ const authRoutes = require("../src/modules/auth/auth-routes");
 const userRoutes = require("../src/modules/user/user-routes");
 const appointmentRoutes = require("../src/modules/appointment/appointment-routes");
 const availabilityRoutes = require("../src/modules/availability/availability-routes");
+const productRoutes = require("../src/modules/product/product-routes");
+const cartRoutes = require("../src/modules/cart/cart-routes");
 
 const app = express();
 
@@ -29,6 +31,8 @@ app.use("/auth", authRoutes);
 app.use("/users", userRoutes);
 app.use("/appointment", appointmentRoutes);
 app.use("/availability", availabilityRoutes);
+app.use("/product", productRoutes);
+app.use("/cart", cartRoutes);
 
 // Global middleware
 app.use((err, req, res, next) => {

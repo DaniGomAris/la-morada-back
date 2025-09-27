@@ -13,7 +13,8 @@ const userSchema = new mongoose.Schema({
   role: { type: String, enum: ["patient", "psychologist"], default: "patient" },
   phone: { type: String, required: true },
   availability_id: { type: String, ref: "Availability" },
-  specialty: { type: String }
+  specialty: { type: String },
+  cart_id: { type: mongoose.Schema.Types.ObjectId, ref: "Cart" }
 });
 
 module.exports = mongoose.model("User", userSchema);
