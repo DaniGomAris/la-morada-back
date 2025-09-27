@@ -12,6 +12,7 @@ const { handleError } = require("./handlers/error-handler");
 const authRoutes = require("../src/modules/auth/auth-routes");
 const userRoutes = require("../src/modules/user/user-routes");
 const appointmentRoutes = require("../src/modules/appointment/appointment-routes");
+const availabilityRoutes = require("../src/modules/availability/availability-routes");
 
 const app = express();
 
@@ -27,6 +28,7 @@ connectDB();
 app.use("/auth", authRoutes);
 app.use("/users", userRoutes);
 app.use("/appointment", appointmentRoutes);
+app.use("/availability", availabilityRoutes);
 
 // Global middleware
 app.use((err, req, res, next) => {

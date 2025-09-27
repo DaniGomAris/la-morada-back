@@ -1,15 +1,13 @@
 const express = require("express");
-const { loginController, logoutController } = require("./auth-controller");
+const AuthController = require("./auth-controller");
 const { validToken } = require("../../middlewares/jwt-middleware");
 
 const router = express.Router();
 
-// Login user
-// POST /auth/login
-router.post("/login", loginController);
+// Login (POST /login)
+router.post("/login", AuthController.login);
 
-// Logout user
-// POST /auth/logout
-router.post("/logout", validToken, logoutController);
+// Logout (POST /logout)
+router.post("/logout", validToken, AuthController.logout);
 
 module.exports = router;

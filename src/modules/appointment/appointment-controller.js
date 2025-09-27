@@ -1,66 +1,61 @@
-const {
-  createAppointment,
-  updateAppointment,
-  deleteAppointment,
-  getAppointmentsByPatient,
-  getAppointmentsByPsychologist
-} = require("./appointment-service");
+const AppointmentService = require("./appointment-service");
 const { handleError } = require("../../handlers/error-handler");
 
+class AppointmentController {
+  // Create appointment
+  static async create(req, res) {
+    try {
+      // If the role is patient, force to use their own user_id
+      const appointmentData = {
+        patient_id: req.user.role === "patient" ? req.user.user_id : req.body.patient_id,
+        psychologist_id: req.body.psychologist_id,
+        start: req.body.start
+      };
 
-// Controller to create a new appointment
-async function createAppointmentController(req, res) {
-  try {
-    const appointment = await createAppointment(req.body);
-    res.status(201).json({ success: true, appointment });
-  } catch (err) {
-    handleError(res, err);
-  }
-}
-
-
-// Controller to update an appointment
-async function updateAppointmentController(req, res) {
-  try {
-    const appointment = await updateAppointment(req.params.id, req.body);
-    res.status(200).json({ success: true, appointment });
-  } catch (err) {
-    handleError(res, err);
-  }
-}
-
-
-// Controller to delete an appointment
-async function deleteAppointmentController(req, res) {
-  try {
-    const result = await deleteAppointment(req.params.id);
-    res.status(200).json({ success: true, result });
-  } catch (err) {
-    handleError(res, err);
-  }
-}
-
-
-// Controller to get appointments depending on user role
-async function getAppointmentsController(req, res) {
-  try {
-    let appointments;
-    if (req.user.role === "patient") {
-      appointments = await getAppointmentsByPatient(req.user.user_id);
-    } else if (req.user.role === "psychologist") {
-      appointments = await getAppointmentsByPsychologist(req.user.user_id);
-    } else {
-      throw new Error("ACCESS DENIED");
+      const appointment = await AppointmentService.createAppointment(appointmentData);
+      res.status(201).json({ success: true, appointment });
+    } catch (err) {
+      handleError(res, err);
     }
-    res.json({ success: true, appointments });
-  } catch (err) {
-    handleError(res, err);
+  }
+
+  // Delete appointment
+  static async remove(req, res) {
+    try {
+      const result = await AppointmentService.deleteAppointment(req.params.id);
+      res.status(200).json({ success: true, result });
+    } catch (err) {
+      handleError(res, err);
+    }
+  }
+
+  // Get all appointments (patient or psychologist)
+  static async getAll(req, res) {
+    try {
+      let appointments;
+      if (req.user.role === "patient") {
+        appointments = await AppointmentService.getAppointmentsByPatient(req.user.user_id);
+      } else if (req.user.role === "psychologist") {
+        appointments = await AppointmentService.getAppointmentsByPsychologist(req.user.user_id);
+      } else {
+        throw new Error("ACCESS DENIED");
+      }
+      res.json({ success: true, appointments });
+    } catch (err) {
+      handleError(res, err);
+    }
+  }
+
+  // Update the status
+  static async updateStatus(req, res) {
+    try {
+      const { status } = req.body;
+      const appointment = await AppointmentService.updateAppointmentStatus(req.params.id, req.user, status);
+      res.status(200).json({ success: true, appointment });
+    } catch (err) {
+      handleError(res, err);
+    }
   }
 }
 
-module.exports = {
-  createAppointmentController,
-  updateAppointmentController,
-  deleteAppointmentController,
-  getAppointmentsController
-};
+module.exports = AppointmentController;

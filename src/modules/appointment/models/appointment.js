@@ -1,15 +1,12 @@
 const mongoose = require("mongoose");
 
-// Appointment estructure
-const appointmentSchema = new mongoose.Schema(
-  {
-    patientID: { type: String, ref: "User", required: true },
-    psychologistID: { type: String, ref: "User", required: true },
-    date: { type: Date, required: true },
-    status: { type: String, default: "pendiente" },
-    notes: { type: String }
-  },
-  { timestamps: true }
-);
+const appointmentSchema = new mongoose.Schema({
+  patient_id: { type: String, ref: "User", required: true },
+  psychologist_id: { type: String, ref: "User", required: true },
+  day: { type: String, required: true },
+  start: { type: String, required: true },
+  end: { type: String, required: true },
+  status: { type: String, enum: ["pendiente", "completada", "cancelada"], default: "pendiente" }
+}, { timestamps: true });
 
 module.exports = mongoose.model("Appointment", appointmentSchema);

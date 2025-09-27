@@ -1,4 +1,4 @@
-const { verifyToken, generateToken } = require("../auth/jwt-auth");
+const { verifyToken, generateToken } = require("../modules/auth/strategies/jwt-strategy");
 const redisClient = require("../config/redis-config");
 const logger = require("../utils/logger");
 

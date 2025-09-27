@@ -1,29 +1,20 @@
 const express = require("express");
-const router = express.Router();
 const { authorizeRoles } = require("../../middlewares/role-middleware");
 const { validToken } = require("../../middlewares/jwt-middleware");
+const AppointmentController = require("./appointment-controller");
 
-const { 
-  createAppointmentController,
-  updateAppointmentController,
-  deleteAppointmentController,
-  getAppointmentsController
-} = require("./appointment-controller");
+const router = express.Router();
 
-// Create appointment
-// POST appointment/
-router.post("/", validToken, authorizeRoles(["patient", "psychologist"]), createAppointmentController);
+// Create appointment (POST /)
+router.post("/", validToken, authorizeRoles(["patient", "psychologist"]), AppointmentController.create);
 
-// Edit appointment
-// PUT appointment/:id
-router.put("/:id", validToken, authorizeRoles(["patient", "psychologist"]), updateAppointmentController);
+// Delete appointment (DELETE /:id)
+router.delete("/:id", validToken, authorizeRoles(["patient", "psychologist"]), AppointmentController.remove);
 
-// Delete appointment
-// DELETE appointment/:id
-router.delete("/:id", validToken, authorizeRoles(["patient", "psychologist"]), deleteAppointmentController);
+// Get appointments (GET /)
+router.get("/", validToken, authorizeRoles(["patient", "psychologist"]), AppointmentController.getAll);
 
-// Get appointment
-// GET appointment/:id
-router.get("/", validToken, authorizeRoles(["patient", "psychologist"]), getAppointmentsController);
+// Update appointment status (PUT /:id/status)
+router.put("/:id/status", validToken, authorizeRoles(["patient", "psychologist"]), AppointmentController.updateStatus);
 
 module.exports = router;

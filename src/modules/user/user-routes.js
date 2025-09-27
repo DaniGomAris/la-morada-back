@@ -1,29 +1,19 @@
 const express = require("express");
 const router = express.Router();
-const {
-  registerUserController,
-  updateUserController,
-  getPatientUsersController,
-  getPsychologistUsersController
-} = require("./user-controller");
 const { validToken } = require("../../middlewares/jwt-middleware");
 const { authorizeRoles } = require("../../middlewares/role-middleware");
+const UserController = require("./user-controller");
 
-// Obtener usuarios (rol patient)
-// GET users/
-router.get("/get-patients", validToken, authorizeRoles(["psychologist"]), getPatientUsersController);
+// Create user (POST /users/register)
+router.post("/register", UserController.register);
 
-// Obtener usuarios (rol psychologist)
-// GET users/
-router.get("/get-psychologists", getPsychologistUsersController);
+// Update user (PUT /users/:id)
+router.put("/:id", validToken, authorizeRoles(["psychologist", "patient"]), UserController.update);
 
-// Registrar usuario
-// POST users/register
-router.post("/register", registerUserController);
+// Get all patients (GET /users/get-patients)
+router.get("/get-patients", validToken, authorizeRoles(["psychologist"]), UserController.getPatients);
 
-// Editar usuario (psychologist)
-// PUT users/:id
-router.put("/:id", validToken, authorizeRoles(["psychologist", "patient"]), updateUserController);
-
+// Get all psychologists (GET /users/get-psychologists)
+router.get("/get-psychologists", UserController.getPsychologists);
 
 module.exports = router;
