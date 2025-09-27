@@ -1,5 +1,5 @@
-const User = require("./models/user-model");
-const Cart = require("../cart/model/cart-model");
+const User = require("./models/user");
+const Cart = require("../cart/models/cart");
 const { validateUser } = require("./validators/user-validator");
 const { hashPassword } = require("../auth/strategies/password-strategy");
 const logger = require("../../utils/logger");

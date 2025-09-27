@@ -1,4 +1,4 @@
-const User = require("../user/models/user-model");
+const User = require("../user/models/user");
 const AuthValidator = require("./validators/auth-validator");
 const JwtStrategy = require("./strategies/jwt-strategy");
 const logger = require("../../utils/logger");

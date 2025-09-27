@@ -1,4 +1,4 @@
-const User = require("../../user/models/user-model");
+const User = require("../../user/models/user");
 const Availability = require("../../availability/models/availability");
 
 const VALID_STATUSES = ["pendiente", "cancelada", "completada"];

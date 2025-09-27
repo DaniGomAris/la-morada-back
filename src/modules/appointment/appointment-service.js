@@ -1,5 +1,5 @@
 const Appointment = require("./models/appointment");
-const User = require("../user/models/user-model");
+const User = require("../user/models/user");
 const Availability = require("../availability/models/availability");
 const logger = require("../../utils/logger");
 

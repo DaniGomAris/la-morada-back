@@ -1,4 +1,4 @@
-const User = require("../../user/models/user-model");
+const User = require("../../user/models/user");
 
 const DAYS_OF_WEEK = ["lunes","martes","miercoles","jueves","viernes","sabado","domingo"];
 

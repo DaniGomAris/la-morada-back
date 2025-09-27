@@ -1,5 +1,5 @@
 const Availability = require("./models/availability");
-const User = require("../user/models/user-model");
+const User = require("../user/models/user");
 const { validateAvailability } = require("./validators/availability-validator");
 const logger = require("../../utils/logger");
 

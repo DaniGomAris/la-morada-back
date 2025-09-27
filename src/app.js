@@ -15,6 +15,8 @@ const appointmentRoutes = require("../src/modules/appointment/appointment-routes
 const availabilityRoutes = require("../src/modules/availability/availability-routes");
 const productRoutes = require("../src/modules/product/product-routes");
 const cartRoutes = require("../src/modules/cart/cart-routes");
+const postRoutes = require("../src/modules/post/post-routes");
+const podcastRoutes = require("../src/modules/podcast/podcast-routes");
 
 const app = express();
 
@@ -28,11 +30,13 @@ connectDB();
 
 // Routes
 app.use("/auth", authRoutes);
-app.use("/users", userRoutes);
+app.use("/user", userRoutes);
 app.use("/appointment", appointmentRoutes);
 app.use("/availability", availabilityRoutes);
 app.use("/product", productRoutes);
 app.use("/cart", cartRoutes);
+app.use("/post", postRoutes);
+app.use("/podcast", podcastRoutes);
 
 // Global middleware
 app.use((err, req, res, next) => {
