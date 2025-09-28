@@ -52,6 +52,12 @@ function handleError(res, err) {
     "FIELDS NOT UPDATABLE": { msg: "Algunos campos no se pueden actualizar", status: STATUS.BAD_REQUEST },
     "PASSWORD_MISMATCH": { msg: "Las contraseñas no coinciden", status: STATUS.BAD_REQUEST },
 
+    // Payment errors
+    "INVALID CARD NUMBER": { msg: "Número de tarjeta inválido", status: STATUS.BAD_REQUEST },
+    "INVALID CARD NAME": { msg: "Nombre de tarjeta inválido", status: STATUS.BAD_REQUEST },
+    "INVALID EXPIRATION DATE": { msg: "Fecha de expiración inválida", status: STATUS.BAD_REQUEST },
+    "INVALID CVV": { msg: "CVV inválido", status: STATUS.BAD_REQUEST },
+
     // Not found
     "USER NOT FOUND": { msg: "Usuario no encontrado", status: STATUS.NOT_FOUND },
     "POST NOT FOUND": { msg: "Post no encontrado", status: STATUS.NOT_FOUND },
