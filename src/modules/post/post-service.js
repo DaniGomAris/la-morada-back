@@ -3,7 +3,8 @@ const User = require("../user/models/user");
 const logger = require("../../utils/logger");
 
 class PostService {
-  // CreatePost
+
+  // Create post
   static async createPost(psychologist_id, title, content, active = true) {
     const user = await User.findById(psychologist_id);
     if (!user || user.role !== "psychologist") throw new Error("USER NOT FOUND OR NOT PSYCHOLOGIST");
@@ -14,15 +15,14 @@ class PostService {
     return post;
   }
 
-  // Get Posts
+  // Get posts
   static async getPosts() {
-    const posts = await Post.find()
+    return await Post.find()
       .populate("psychologist_id", "name last_name1 last_name2")
       .sort({ created_at: -1 });
-    return posts;
   }
 
-  // GetPostById
+  // Get posts by Id
   static async getPostById(post_id) {
     const post = await Post.findById(post_id)
       .populate("psychologist_id", "name last_name1 last_name2");
@@ -30,12 +30,11 @@ class PostService {
     return post;
   }
 
-  // UpdatePost
+  // Update posts
   static async updatePost(post_id, updates, user_id) {
     const post = await Post.findById(post_id);
     if (!post) throw new Error("POST NOT FOUND");
 
-    // Check if the post belongs to the psychologist trying to edit
     if (post.psychologist_id.toString() !== user_id) {
       throw new Error("ACCESS DENIED");
     }
@@ -49,12 +48,11 @@ class PostService {
     return post;
   }
 
-  // DeletePost
+  // Delete posts
   static async deletePost(post_id, user_id) {
     const post = await Post.findById(post_id);
     if (!post) throw new Error("POST NOT FOUND");
 
-    // Check if the post belongs to the psychologist trying to delete
     if (post.psychologist_id.toString() !== user_id) {
       throw new Error("ACCESS DENIED");
     }

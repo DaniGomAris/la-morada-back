@@ -21,12 +21,12 @@ async function validateAvailability(data) {
 
   for (const day of data.days) {
     if (!DAYS_OF_WEEK.includes(day.toLowerCase()))
-      throw new Error(`INVALID DAY: ${day}`);
+      throw new Error("INVALID DAY");
   }
 
   for (const slot of data.slots) {
     if (!isValidTime(slot.start) || !isValidTime(slot.end))
-      throw new Error(`INVALID SLOT TIME: ${JSON.stringify(slot)}`);
+      throw new Error("INVALID SLOT TIME");
   }
 }
 

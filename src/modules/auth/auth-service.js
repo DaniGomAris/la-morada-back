@@ -14,11 +14,10 @@ class AuthService {
       throw new Error("USER NOT FOUND");
     }
 
-    // Validate password hash in DB
     await AuthValidator.validatePassword(user.password, password);
+
     AuthValidator.validateRole(user.role, ["patient", "psychologist"]);
-    
-    // Generate token
+
     const { password: _, ...userWithoutPassword } = user.toObject();
     const token = await JwtStrategy.generateToken(user._id, user.role);
 
@@ -39,8 +38,6 @@ class AuthService {
       throw new Error("INVALID TOKEN");
     }
 
-
-    // Invaldiate token
     await JwtStrategy.invalidateToken(decoded.user_id);
     logger.info(`Logout successful for user ${decoded.user_id}`);
     return true;

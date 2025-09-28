@@ -23,7 +23,7 @@ class PodcastService {
     }
   }
 
-  // Get podcasts
+  // Get all podcasts
   static async getAll() {
     try {
       const podcasts = await Podcast.find().sort({ createdAt: -1 }).lean();

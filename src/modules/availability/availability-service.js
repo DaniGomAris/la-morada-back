@@ -16,7 +16,6 @@ class AvailabilityService {
       let availability;
 
       if (user.availability_id) {
-        // Update existing availability
         availability = await Availability.findById(user.availability_id);
         if (!availability) throw new Error("AVAILABILITY NOT FOUND");
 
@@ -25,7 +24,6 @@ class AvailabilityService {
         await availability.save();
         logger.info(`Availability updated for user ${user_id}`);
       } else {
-        // Create new availability
         availability = new Availability({ ...data });
         await availability.save();
 
@@ -47,7 +45,6 @@ class AvailabilityService {
       const availability = await Availability.findByIdAndDelete(id);
       if (!availability) throw new Error("AVAILABILITY NOT FOUND");
 
-      // Remove reference from user
       const user = await User.findOne({ availability_id: id });
       if (user) {
         user.availability_id = null;

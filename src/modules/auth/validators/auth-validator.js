@@ -28,7 +28,7 @@ class AuthValidator {
     const isValid = await argon2.verify(hash, plainPassword);
     if (!isValid) {
       logger.error("Invalid password");
-      throw new Error("INVALID PASSWORD");
+      throw new Error("WRONG PASSWORD");
     }
     return true;
   }

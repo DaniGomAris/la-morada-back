@@ -14,7 +14,7 @@ class PodcastController {
     }
   }
 
-  // Get podcasts
+  // Get all podcasts
   static async getAll(req, res) {
     try {
       const podcasts = await PodcastService.getAll();

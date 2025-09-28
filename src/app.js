@@ -1,6 +1,7 @@
 require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
+const helmet = require("helmet");
 
 const connectDB = require("./config/mongo-config");
 const redisClient = require("./config/redis-config");
@@ -26,6 +27,7 @@ const app = express();
 app.use(express.json());
 app.use(cors({ origin: "*" }));
 app.use(requestLogger);
+app.use(helmet());
 
 // MOngo DB connection
 connectDB();

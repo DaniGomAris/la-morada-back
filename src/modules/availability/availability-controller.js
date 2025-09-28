@@ -3,6 +3,7 @@ const { handleError } = require("../../handlers/error-handler");
 const logger = require("../../utils/logger");
 
 class AvailabilityController {
+
   // Create or update availability
   static async upsert(req, res) {
     try {
@@ -17,7 +18,7 @@ class AvailabilityController {
     }
   }
 
-  // Delete availability
+  // Delete appointment
   static async remove(req, res) {
     try {
       const result = await AvailabilityService.delete(req.params.id);
@@ -28,7 +29,7 @@ class AvailabilityController {
     }
   }
 
-  // Get availability for the logged-in psychologist
+  // Get availability for user
   static async get(req, res) {
     try {
       const availability = await AvailabilityService.getByPsychologist(

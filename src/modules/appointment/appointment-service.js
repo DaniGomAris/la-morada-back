@@ -4,6 +4,7 @@ const Availability = require("../availability/models/availability");
 const logger = require("../../utils/logger");
 
 class AppointmentService {
+
   // Add one hour to a given time (HH:mm)
   static addOneHour(time) {
     const [hour, min] = time.split(":").map(Number);
@@ -12,7 +13,7 @@ class AppointmentService {
     return `${newHour.toString().padStart(2, "0")}:${min.toString().padStart(2, "0")}`;
   }
 
-  // Create an appointment
+  // Create appointment
   static async createAppointment(data) {
     try {
       // Validate patient and psychologist
@@ -21,7 +22,6 @@ class AppointmentService {
       if (!patient || patient.role !== "patient") throw new Error("INVALID PATIENT");
       if (!psychologist || psychologist.role !== "psychologist") throw new Error("INVALID PSYCHOLOGIST");
 
-      // Check psychologist availability
       const availability = await Availability.findById(psychologist.availability_id);
       if (!availability) throw new Error("PSYCHOLOGIST HAS NO AVAILABILITY");
 
@@ -43,7 +43,6 @@ class AppointmentService {
       );
       if (!validSlot) throw new Error("TIME NOT AVAILABLE IN SLOT");
 
-      // Prevent overlapping appointments
       const overlapping = await Appointment.findOne({
         psychologist_id: data.psychologist_id,
         day: dayOfWeek,
@@ -52,7 +51,6 @@ class AppointmentService {
       });
       if (overlapping) throw new Error("TIME ALREADY BOOKED");
 
-      // Save appointment
       const appointment = new Appointment({
         patient_id: data.patient_id,
         psychologist_id: data.psychologist_id,
@@ -81,13 +79,11 @@ class AppointmentService {
       const allowedStatuses = ["pendiente", "confirmada", "completada", "cancelada"];
       if (!allowedStatuses.includes(newStatus)) throw new Error("INVALID STATUS");
 
-      // Patients cannot confirm/complete appointments
       if (user.role === "patient") {
         if (["confirmada", "completada"].includes(newStatus)) throw new Error("ACCESS DENIED");
         if (appointment.status === "completada") throw new Error("CANNOT CHANGE COMPLETED APPOINTMENT");
       }
 
-      // Psychologists restrictions
       if (user.role === "psychologist") {
         if (appointment.status === "cancelada") throw new Error("CANNOT CHANGE CANCELLED APPOINTMENT");
         if (appointment.status === "completada" && newStatus !== "completada") {
@@ -131,7 +127,6 @@ class AppointmentService {
     }
   }
 
-  // Get all appointments by psychologist
   static async getAppointmentsByPsychologist(psychologist_id) {
     try {
       const appointments = await Appointment.find({ psychologist_id }).sort({ start: 1 });

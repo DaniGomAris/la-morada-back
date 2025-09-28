@@ -1,10 +1,12 @@
 const STATUS = require("../handlers/status-handler");
+const logger = require("../utils/logger");
 
 function handleError(res, err) {
   const ERROR_MAP = {
-    // Authentication errors
+    // Auth errors
     "MISSING CREDENTIALS": { msg: "Credenciales faltantes", status: STATUS.BAD_REQUEST },
     "INVALID EMAIL": { msg: "Correo electrónico inválido", status: STATUS.BAD_REQUEST },
+    "INVALID PASSWORD": { msg: "Contraseña inválida", status: STATUS.BAD_REQUEST },
     "WRONG PASSWORD": { msg: "Contraseña incorrecta", status: STATUS.UNAUTHORIZED },
     "UNAUTHORIZED": { msg: "No autorizado", status: STATUS.FORBIDDEN },
     "INVALID TOKEN": { msg: "Token inválido o expirado", status: STATUS.UNAUTHORIZED },
@@ -21,8 +23,11 @@ function handleError(res, err) {
     "DAY NOT AVAILABLE": { msg: "El psicólogo no atiende ese día", status: STATUS.BAD_REQUEST },
 
     // Availability errors
-    "DATA INCOMPLETE": { msg: "Faltan campos requeridos", status: STATUS.BAD_REQUEST },
-    "DAYS AND SLOTS MUST MATCH": { msg: "Los días y los horarios deben coincidir en cantidad", status: STATUS.BAD_REQUEST },
+    "PSYCHOLOGIST_ID REQUIRED": { msg: "Se requiere el ID del psicólogo", status: STATUS.BAD_REQUEST },
+    "DAYS REQUIRED": { msg: "Se deben especificar los días de disponibilidad", status: STATUS.BAD_REQUEST },
+    "SLOTS MUST MATCH DAYS LENGTH": { msg: "Los horarios deben coincidir en cantidad con los días", status: STATUS.BAD_REQUEST },
+    "INVALID DAY": { msg: "Día inválido", status: STATUS.BAD_REQUEST },
+    "INVALID SLOT TIME": { msg: "Horario inválido", status: STATUS.BAD_REQUEST },
     "AVAILABILITY NOT FOUND": { msg: "Disponibilidad no encontrada", status: STATUS.NOT_FOUND },
 
     // Conflict / registration
@@ -33,6 +38,7 @@ function handleError(res, err) {
     // Permissions
     "ACCESS DENIED": { msg: "Acceso denegado", status: STATUS.FORBIDDEN },
     "USER NOT FOUND OR NOT PSYCHOLOGIST": { msg: "Usuario no encontrado o no es psicólogo", status: STATUS.FORBIDDEN },
+    "INVALID ROLE": { msg: "El usuario no tiene el rol requerido", status: STATUS.FORBIDDEN },
 
     // Validation errors
     "INVALID PARAMS": { msg: "Parámetros inválidos", status: STATUS.BAD_REQUEST },
@@ -42,13 +48,15 @@ function handleError(res, err) {
     "INVALID LASTNAME1": { msg: "Primer apellido inválido", status: STATUS.BAD_REQUEST },
     "INVALID LASTNAME2": { msg: "Segundo apellido inválido", status: STATUS.BAD_REQUEST },
     "INVALID AGE": { msg: "Edad inválida", status: STATUS.BAD_REQUEST },
-    "INVALID PASSWORD": { msg: "Contraseña inválida", status: STATUS.BAD_REQUEST },
     "INVALID PHONE": { msg: "Teléfono inválido", status: STATUS.BAD_REQUEST },
     "FIELDS NOT UPDATABLE": { msg: "Algunos campos no se pueden actualizar", status: STATUS.BAD_REQUEST },
+    "PASSWORD_MISMATCH": { msg: "Las contraseñas no coinciden", status: STATUS.BAD_REQUEST },
 
     // Not found
     "USER NOT FOUND": { msg: "Usuario no encontrado", status: STATUS.NOT_FOUND },
     "POST NOT FOUND": { msg: "Post no encontrado", status: STATUS.NOT_FOUND },
+    "PRODUCT NOT FOUND": { msg: "Producto no encontrado", status: STATUS.NOT_FOUND },
+    "CART NOT FOUND": { msg: "Carrito no encontrado", status: STATUS.NOT_FOUND },
 
     // Product errors
     "INVALID TITLE": { msg: "Título inválido", status: STATUS.BAD_REQUEST },
@@ -56,24 +64,30 @@ function handleError(res, err) {
     "INVALID PUBLISH_YEAR": { msg: "Año de publicación inválido", status: STATUS.BAD_REQUEST },
     "INVALID PRICE": { msg: "Precio inválido", status: STATUS.BAD_REQUEST },
     "INVALID COVER_URL": { msg: "URL de portada inválida", status: STATUS.BAD_REQUEST },
-    "PRODUCT NOT FOUND": { msg: "Producto no encontrado", status: STATUS.NOT_FOUND },
     "PRODUCT EXISTS": { msg: "El producto ya existe", status: STATUS.CONFLICT },
 
     // Cart errors
-    "CART NOT FOUND": { msg: "Carrito no encontrado", status: STATUS.NOT_FOUND },
     "INVALID PRODUCT_ID": { msg: "ID de producto inválido", status: STATUS.BAD_REQUEST },
     "INVALID QUANTITY": { msg: "Cantidad inválida", status: STATUS.BAD_REQUEST },
 
     // Podcast errors
     "INVALID YOUTUBE ID": { msg: "ID de YouTube inválido", status: STATUS.BAD_REQUEST },
     "INVALID DESCRIPTION": { msg: "Descripción inválida", status: STATUS.BAD_REQUEST },
-    "USER NOT FOUND OR NOT PSYCHOLOGIST": { msg: "Usuario no encontrado o no es psicólogo", status: STATUS.FORBIDDEN },
+
+    // Post errors
+    "INVALID CONTENT": { msg: "Contenido inválido", status: STATUS.BAD_REQUEST },
+    "INVALID ACTIVE": { msg: "Estado activo inválido", status: STATUS.BAD_REQUEST },
   };
 
-  const { msg, status } =
-    ERROR_MAP[err.message?.toUpperCase?.()] || { msg: "Error interno del servidor", status: STATUS.INTERNAL_SERVER_ERROR };
+  const key = err.message?.toUpperCase?.() || "DEFAULT";
+  const { msg, status } = ERROR_MAP[key] || {
+    msg: "Error interno del servidor",
+    status: STATUS.INTERNAL_SERVER_ERROR,
+  };
 
-  return res.status(status).json({ message: msg });
+  logger.error(`Error handled: ${err.message}`, { stack: err.stack });
+
+  return res.status(status).json({ success: false, message: msg });
 }
 
 module.exports = { handleError };

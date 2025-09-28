@@ -3,14 +3,14 @@ const { validateProduct } = require("./validators/product-validator");
 const logger = require("../../utils/logger");
 
 class ProductService {
-  // Create product
+  // Crear producto
   static async create(data) {
     validateProduct(data);
 
     const existing = await ProductModel.findOne({ title: data.title });
     if (existing) {
       logger.warn(`Product already exists: ${data.title}`);
-      throw new Error("RESOURCE EXISTS");
+      throw new Error("PRODUCT EXISTS");
     }
 
     const product = new ProductModel(data);
@@ -20,14 +20,14 @@ class ProductService {
     return product;
   }
 
-  // Get products by title
+  // Obtener productos por título
   static async getByTitle(title) {
     const regex = new RegExp(title, "i");
     const products = await ProductModel.find({ title: regex }).lean();
     return products;
   }
 
-  // Get all products
+  // Obtener todos los productos
   static async getAll() {
     return await ProductModel.find().lean();
   }

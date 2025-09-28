@@ -5,7 +5,7 @@ const logger = require("../../utils/logger");
 
 class PostController {
 
-  // Create post
+  // Create posts
   static async createPost(req, res) {
     try {
       const psychologist_id = req.user.user_id;
@@ -32,7 +32,7 @@ class PostController {
     }
   }
 
-  // Get post by id
+  // Get posts by id
   static async getPostById(req, res) {
     try {
       const post_id = req.params.id;
@@ -49,6 +49,7 @@ class PostController {
     try {
       const post_id = req.params.id;
       const updates = req.body;
+
       validatePost(updates);
 
       const post = await PostService.updatePost(post_id, updates, req.user.user_id);

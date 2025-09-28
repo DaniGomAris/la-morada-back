@@ -16,4 +16,9 @@ router.get("/get-patients", validToken, authorizeRoles(["psychologist"]), UserCo
 // Get all psychologists (GET /users/get-psychologists)
 router.get("/get-psychologists", UserController.getPsychologists);
 
+// Get psychologist by especialty (GET /users/by-specialty)
+router.get("/by-specialty", UserController.getPsychologistsBySpecialty);
+
+// Delete own user (DELETE users/delete-me)
+router.delete("/delete-me", validToken, authorizeRoles(["psychologist", "patient"]), UserController.deleteUser);
 module.exports = router;

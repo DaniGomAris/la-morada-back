@@ -16,8 +16,9 @@ class AuthController {
         user,
         token,
       });
-      logger.info("Login successful");
+      logger.info(`Login successful for email: ${email}`);
     } catch (err) {
+      logger.error(`AuthController login failed: ${err.message}`);
       handleError(res, err);
     }
   }
@@ -40,6 +41,7 @@ class AuthController {
       });
       logger.info("Logout successful");
     } catch (err) {
+      logger.error(`AuthController logout failed: ${err.message}`);
       handleError(res, err);
     }
   }
