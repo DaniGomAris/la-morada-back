@@ -1,26 +1,25 @@
 const Podcast = require("./models/podcast");
 const { validatePodcast } = require("./validators/podcast-validator");
 const logger = require("../../utils/logger");
+const User = require("../user/models/user");
 
 class PodcastService {
   // Create podcast
   static async create(data, user) {
-    try {
-      validatePodcast(data);
+    validatePodcast(data);
 
-      const podcast = new Podcast({
-        ...data,
-        creator_id: user.user_id,
-        creator_name: `${user.name} ${user.last_name1}`,
-      });
+    // Obtain user credential by DB
+    const dbUser = await User.findById(user.user_id);
 
-      await podcast.save();
-      logger.info(`Podcast created: ${data.title} by ${user.email}`);
-      return podcast;
-    } catch (err) {
-      logger.error(`PodcastService.create: ${err.message}`);
-      throw err;
-    }
+    const podcast = new Podcast({
+      ...data,
+      creator_id: user.user_id,
+      creator_name: `${dbUser.name} ${dbUser.last_name1}`,
+    });
+
+    await podcast.save();
+    logger.info(`Podcast created: ${data.title} by ${user.email}`);
+    return podcast;
   }
 
   // Get all podcasts
