@@ -12,7 +12,7 @@ class PaymentService {
         const payment = new Payment({ ...data, user_id: userId });
         await payment.save();
 
-        // Vincular el método de pago al usuario
+        // Link the payment method to the user
         const user = await User.findById(userId);
         if (!user) throw new Error("USER NOT FOUND");
 
