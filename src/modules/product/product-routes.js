@@ -5,13 +5,13 @@ const ProductController = require("./product-controller");
 
 const router = express.Router();
 
-// Create product (POST /)
+// Create product (POST /product/)
 router.post("/", validToken, authorizeRoles(["psychologist"]), ProductController.create);
 
-// Get products by title (GET /products?title=)
+// Get products by title (GET /product/products?title=)
 router.get("/", ProductController.getByTitle);
 
-// Get all products (GET /all)
+// Get all products (GET /product/all)
 router.get("/all", ProductController.getAll);
 
 module.exports = router;

@@ -4,21 +4,21 @@ const { validToken } = require("../../middlewares/jwt-middleware");
 const { authorizeRoles } = require("../../middlewares/role-middleware");
 const UserController = require("./user-controller");
 
-// Create user (POST /users/register)
+// Create user (POST /user/register)
 router.post("/register", UserController.register);
 
-// Update user (PUT /users/:id)
+// Update user (PUT /user/:id)
 router.put("/:id", validToken, authorizeRoles(["psychologist", "patient"]), UserController.update);
 
-// Get all patients (GET /users/get-patients)
+// Get all patients (GET /user/get-patients)
 router.get("/get-patients", validToken, authorizeRoles(["psychologist"]), UserController.getPatients);
 
-// Get all psychologists (GET /users/get-psychologists)
+// Get all psychologists (GET /user/get-psychologists)
 router.get("/get-psychologists", UserController.getPsychologists);
 
-// Get psychologist by especialty (GET /users/by-specialty)
+// Get psychologist by especialty (GET /user/by-specialty)
 router.get("/by-specialty", UserController.getPsychologistsBySpecialty);
 
-// Delete own user (DELETE users/delete-me)
+// Delete own user (DELETE user/delete-me)
 router.delete("/delete-me", validToken, authorizeRoles(["psychologist", "patient"]), UserController.deleteUser);
 module.exports = router;

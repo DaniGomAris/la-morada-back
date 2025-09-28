@@ -5,10 +5,10 @@ const { loginLimiter } = require("../../middlewares/rate-limit-middleware");
 
 const router = express.Router();
 
-// Login (POST /login)
+// Login (POST /auth/login)
 router.post("/login", loginLimiter, AuthController.login);
 
-// Logout (POST /logout)
+// Logout (POST /auth/logout)
 router.post("/logout", validToken, AuthController.logout);
 
 module.exports = router;

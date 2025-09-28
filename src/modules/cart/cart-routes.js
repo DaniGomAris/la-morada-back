@@ -4,16 +4,16 @@ const CartController = require("./cart-controller");
 
 const router = express.Router();
 
-// Add cart (POST /add)
+// Add cart (POST /cart/add)
 router.post("/add", validToken, CartController.addProduct);
 
-// Obtener carrito (GET /)
+// Obtener carrito (GET /cart/)
 router.get("/", validToken, CartController.getCart);
 
-// Delete cart product (POST /remove)
+// Delete cart product (POST /cart/remove)
 router.post("/remove", validToken, CartController.removeProduct);
 
-// Empty cart (POST  /clear)
+// Empty cart (POST /cart/clear)
 router.post("/clear", validToken, CartController.clearCart);
 
 module.exports = router;

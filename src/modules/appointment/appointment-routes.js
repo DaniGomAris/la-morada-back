@@ -5,16 +5,16 @@ const AppointmentController = require("./appointment-controller");
 
 const router = express.Router();
 
-// Create appointment (POST /)
+// Create appointment (POST /appointment/)
 router.post("/", validToken, authorizeRoles(["patient", "psychologist"]), AppointmentController.create);
 
-// Delete appointment (DELETE /:id)
+// Delete appointment (DELETE /appointment/:id)
 router.delete("/:id", validToken, authorizeRoles(["patient", "psychologist"]), AppointmentController.remove);
 
-// Get appointments (GET /)
+// Get appointments (GET /appointment/)
 router.get("/", validToken, authorizeRoles(["patient", "psychologist"]), AppointmentController.getAll);
 
-// Update appointment status (PUT /:id/status)
+// Update appointment status (PUT /appointment/:id/status)
 router.put("/:id/status", validToken, authorizeRoles(["patient", "psychologist"]), AppointmentController.updateStatus);
 
 module.exports = router;
