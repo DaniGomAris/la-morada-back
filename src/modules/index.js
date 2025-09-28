@@ -6,6 +6,7 @@ const productRoutes = require("./product/product-routes");
 const cartRoutes = require("./cart/cart-routes");
 const postRoutes = require("./post/post-routes");
 const podcastRoutes = require("./podcast/podcast-routes");
+const paymentRoutes = require("./payment/payment-routes");
 
 module.exports = {
   authRoutes,
@@ -16,4 +17,5 @@ module.exports = {
   cartRoutes,
   postRoutes,
   podcastRoutes,
+  paymentRoutes
 };

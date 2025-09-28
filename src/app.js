@@ -18,7 +18,8 @@ const {
   productRoutes,
   cartRoutes,
   postRoutes,
-  podcastRoutes
+  podcastRoutes,
+  paymentRoutes
 } = require("./modules");
 
 const app = express();
@@ -41,6 +42,7 @@ app.use("/product", productRoutes);
 app.use("/cart", cartRoutes);
 app.use("/post", postRoutes);
 app.use("/podcast", podcastRoutes);
+app.use("/payment", paymentRoutes);
 
 // Global middleware
 app.use((err, req, res, next) => {
