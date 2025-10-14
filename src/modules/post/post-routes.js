@@ -15,9 +15,9 @@ router.get("/", PostController.getPosts);
 router.get("/:id", PostController.getPostById);
 
 // Update post (PUT /post/:id)
-router.put("/:id", authorizeRoles(["psychologist"]), validToken, PostController.updatePost);
+router.put("/:id", validToken, authorizeRoles(["psychologist"]), PostController.updatePost);
 
 // Delete post (DELETE /post/:id)
-router.delete("/:id", authorizeRoles(["psychologist"]), validToken, PostController.deletePost);
+router.delete("/:id", validToken, authorizeRoles(["psychologist"]), PostController.deletePost);
 
 module.exports = router;
