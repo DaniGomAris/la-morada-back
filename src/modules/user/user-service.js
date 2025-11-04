@@ -3,8 +3,17 @@ const Cart = require("../cart/models/cart");
 const { validateUser } = require("./validators/user-validator");
 const { hashPassword } = require("../auth/strategies/password-strategy");
 const logger = require("../../utils/logger");
+const redisClient = require("../../config/redis-config");
+const TwilioService = require("../twilio/twilio-service");
+
+// Helper to generate 6-character reset code
+function generateCode(length = 6) {
+  const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+  return Array.from({ length }, () => chars[Math.floor(Math.random() * chars.length)]).join("");
+}
 
 class UserService {
+  // Register new user
   static async register(data) {
     validateUser(data);
 
@@ -29,11 +38,12 @@ class UserService {
     return userWithoutPassword;
   }
 
+  // Update user
   static async update(userId, updates) {
     const user = await User.findById(userId);
     if (!user) throw new Error("USER NOT FOUND");
 
-    const allowedFields = ["name","last_name1","last_name2","email","phone","age","password"];
+    const allowedFields = ["name", "last_name1", "last_name2", "email", "phone", "age", "password"];
     const invalidFields = Object.keys(updates).filter(f => !allowedFields.includes(f));
     if (invalidFields.length) throw new Error("FIELDS NOT UPDATABLE");
 
@@ -51,38 +61,67 @@ class UserService {
     return userWithoutPassword;
   }
 
+  // Get all patients
   static async getPatients() {
-    return await User.find({ role: "patient" })
-      .select("-password")
-      .lean();
+    return await User.find({ role: "patient" }).select("-password").lean();
   }
 
+  // Get all psychologists
   static async getPsychologists() {
-    return await User.find({ role: "psychologist" })
-      .select("-password")
-      .lean();
+    return await User.find({ role: "psychologist" }).select("-password").lean();
   }
 
+  // Get psychologists by specialty
   static async getPsychologistsBySpecialty(specialty) {
-    if (!specialty || typeof specialty !== "string") {
-      throw new Error("INVALID PARAMS");
-    }
+    if (!specialty || typeof specialty !== "string") throw new Error("INVALID PARAMS");
 
-    const regex = new RegExp(specialty, "i"); // Works with uppercase letters
-    const psychologists = await User.find({ role: "psychologist", specialty: regex })
-      .select("-password")
-      .lean();
-
-    return psychologists;
+    const regex = new RegExp(specialty, "i");
+    return await User.find({ role: "psychologist", specialty: regex }).select("-password").lean();
   }
 
-  // Delete user
+  // Delete own user
   static async delete(userId) {
     const user = await User.findById(userId);
     if (!user) throw new Error("USER NOT FOUND");
 
     await User.findByIdAndDelete(userId);
-    return { message: "Usuario eliminado correctamente" };
+    return { message: "User successfully deleted" };
+  }
+
+  // Request password reset
+  static async requestPasswordReset(email) {
+    const user = await User.findOne({ email });
+    if (!user) throw new Error("USER NOT FOUND");
+
+    const code = generateCode(6);
+    const ttl = parseInt(process.env.RESET_CODE_TTL, 10) || 900; // 15 minutes default
+
+    // Store code in Redis
+    await redisClient.setEx(`reset:${email}`, ttl, code);
+    logger.info(`Password reset code stored for ${email}`);
+
+    // Send reset email
+    await TwilioService.sendPasswordResetEmail(user, code);
+
+    return { message: "Reset code sent to your email." };
+  }
+
+  // Reset password using code
+  static async resetPassword(email, code, newPassword) {
+    const user = await User.findOne({ email });
+    if (!user) throw new Error("USER NOT FOUND");
+
+    const storedCode = await redisClient.get(`reset:${email}`);
+    if (!storedCode) throw new Error("CODE EXPIRED OR NOT FOUND");
+    if (storedCode !== code) throw new Error("INVALID CODE");
+
+    user.password = await hashPassword(newPassword);
+    await user.save();
+
+    await redisClient.del(`reset:${email}`);
+    logger.info(`Password successfully reset for ${email}`);
+
+    return { message: "Password successfully updated." };
   }
 }
 

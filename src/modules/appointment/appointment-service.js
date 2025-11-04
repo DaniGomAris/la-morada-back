@@ -1,11 +1,12 @@
 const Appointment = require("./models/appointment");
 const User = require("../user/models/user");
 const Availability = require("../availability/models/availability");
+const TwilioService = require("../twilio/twilio-service");
 const logger = require("../../utils/logger");
 
 class AppointmentService {
 
-  // Add one hour to a given time (HH:mm)
+  // Helper to add one hour to a time string "HH:MM"
   static addOneHour(time) {
     const [hour, min] = time.split(":").map(Number);
     let newHour = hour + 1;
@@ -13,47 +14,51 @@ class AppointmentService {
     return `${newHour.toString().padStart(2, "0")}:${min.toString().padStart(2, "0")}`;
   }
 
-  // Create appointment
+  // Create a new appointment
   static async createAppointment(data) {
     try {
-      // Validate patient and psychologist
-      const patient = await User.findById(data.patient_id);
-      const psychologist = await User.findById(data.psychologist_id);
+      const patient_id = String(data.patient_id);
+      const psychologist_id = String(data.psychologist_id);
+
+      const patient = await User.findById(patient_id);
+      const psychologist = await User.findById(psychologist_id);
+
       if (!patient || patient.role !== "patient") throw new Error("INVALID PATIENT");
       if (!psychologist || psychologist.role !== "psychologist") throw new Error("INVALID PSYCHOLOGIST");
 
       const availability = await Availability.findById(psychologist.availability_id);
       if (!availability) throw new Error("PSYCHOLOGIST HAS NO AVAILABILITY");
 
-      // Validate date (must be in the future)
       const appointmentDate = new Date(data.start);
       if (appointmentDate <= new Date()) throw new Error("DATE MUST BE IN THE FUTURE");
 
-      // Check if the day is available
       const dayOfWeek = appointmentDate.toLocaleDateString("es-CO", { weekday: "long" }).toLowerCase();
       if (!availability.days.map(d => d.toLowerCase()).includes(dayOfWeek)) {
         throw new Error("DAY NOT AVAILABLE");
       }
 
-      // Check if the time fits a slot
       const startHour = appointmentDate.getHours().toString().padStart(2, "0") + ":00";
       const endHour = this.addOneHour(startHour);
+
+      // Check if the time is within available slots
       const validSlot = availability.slots.find(slot =>
         startHour >= slot.start && endHour <= slot.end
       );
       if (!validSlot) throw new Error("TIME NOT AVAILABLE IN SLOT");
 
+      // Check for overlapping appointments
       const overlapping = await Appointment.findOne({
-        psychologist_id: data.psychologist_id,
+        psychologist_id,
         day: dayOfWeek,
         start: { $lt: endHour },
         end: { $gt: startHour }
       });
       if (overlapping) throw new Error("TIME ALREADY BOOKED");
 
+      // Create and save the appointment
       const appointment = new Appointment({
-        patient_id: data.patient_id,
-        psychologist_id: data.psychologist_id,
+        patient_id,
+        psychologist_id,
         day: dayOfWeek,
         start: startHour,
         end: endHour,
@@ -61,7 +66,11 @@ class AppointmentService {
       });
 
       await appointment.save();
-      logger.info(`Appointment created: ${appointment._id} for patient ${data.patient_id}`);
+      logger.info(`Appointment created: ${appointment._id} for patient ${patient_id}`);
+
+      // Send confirmation emails
+      await TwilioService.sendAppointmentEmail({ patient, psychologist, appointment });
+
       return appointment;
 
     } catch (err) {
@@ -73,9 +82,10 @@ class AppointmentService {
   // Update appointment status
   static async updateAppointmentStatus(appointmentId, user, newStatus) {
     try {
-      const appointment = await Appointment.findById(appointmentId);
+      const appointment = await Appointment.findById(String(appointmentId));
       if (!appointment) throw new Error("APPOINTMENT NOT FOUND");
 
+      // Validate new status
       const allowedStatuses = ["pendiente", "confirmada", "completada", "cancelada"];
       if (!allowedStatuses.includes(newStatus)) throw new Error("INVALID STATUS");
 
@@ -91,6 +101,7 @@ class AppointmentService {
         }
       }
 
+      // Update and save the appointment
       appointment.status = newStatus;
       await appointment.save();
       logger.info(`Appointment ${appointment._id} status updated to ${newStatus}`);
@@ -102,10 +113,10 @@ class AppointmentService {
     }
   }
 
-  // Delete appointment
+  // Delete an appointment
   static async deleteAppointment(id) {
     try {
-      const appointment = await Appointment.findByIdAndDelete(id);
+      const appointment = await Appointment.findByIdAndDelete(String(id));
       if (!appointment) throw new Error("APPOINTMENT NOT FOUND");
       logger.info(`Appointment deleted: ${id}`);
       return appointment;
@@ -115,10 +126,10 @@ class AppointmentService {
     }
   }
 
-  // Get all appointments by patient
+  // Get appointments by patient
   static async getAppointmentsByPatient(patient_id) {
     try {
-      const appointments = await Appointment.find({ patient_id }).sort({ start: 1 });
+      const appointments = await Appointment.find({ patient_id: String(patient_id) }).sort({ start: 1 });
       logger.info(`Retrieved ${appointments.length} appointments for patient ${patient_id}`);
       return appointments;
     } catch (err) {
@@ -127,9 +138,10 @@ class AppointmentService {
     }
   }
 
+  // Get appointments by psychologist
   static async getAppointmentsByPsychologist(psychologist_id) {
     try {
-      const appointments = await Appointment.find({ psychologist_id }).sort({ start: 1 });
+      const appointments = await Appointment.find({ psychologist_id: String(psychologist_id) }).sort({ start: 1 });
       logger.info(`Retrieved ${appointments.length} appointments for psychologist ${psychologist_id}`);
       return appointments;
     } catch (err) {

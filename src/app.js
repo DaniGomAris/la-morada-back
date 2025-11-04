@@ -3,8 +3,9 @@ const express = require("express");
 const cors = require("cors");
 const helmet = require("helmet");
 
-const connectDB = require("./config/mongo-config");
+const connectMongo = require("./config/mongo-config");
 const redisClient = require("./config/redis-config");
+const connectTwilio = require("./config/twilio-config");
 
 const logger = require("./utils/logger");
 const requestLogger = require("./middlewares/logger-middleware");
@@ -31,7 +32,8 @@ app.use(requestLogger);
 app.use(helmet());
 
 // MOngo DB connection
-connectDB();
+connectMongo();
+connectTwilio();
 
 // Routes
 app.use("/auth", authRoutes);

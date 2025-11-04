@@ -83,6 +83,11 @@ function handleError(res, err) {
     // Post errors
     "INVALID CONTENT": { msg: "Contenido inválido", status: STATUS.BAD_REQUEST },
     "INVALID ACTIVE": { msg: "Estado activo inválido", status: STATUS.BAD_REQUEST },
+
+    // Twilio / SendGrid errors
+    "FAILED TO SEND APPOINTMENT CONFIRMATION": { msg: "No se pudo enviar el correo de confirmación de la cita", status: STATUS.INTERNAL_SERVER_ERROR },
+    "SENDGRID API KEY MISSING": { msg: "Falta la clave API de SendGrid", status: STATUS.INTERNAL_SERVER_ERROR },
+    "EMAIL SEND FAILED": { msg: "Error al enviar el correo electrónico", status: STATUS.INTERNAL_SERVER_ERROR },
   };
 
   const key = err.message?.toUpperCase?.() || "DEFAULT";

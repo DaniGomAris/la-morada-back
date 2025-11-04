@@ -21,4 +21,11 @@ router.get("/by-specialty", UserController.getPsychologistsBySpecialty);
 
 // Delete own user (DELETE user/delete-me)
 router.delete("/delete-me", validToken, authorizeRoles(["psychologist", "patient"]), UserController.deleteUser);
+
+// Request password reset code
+router.post("/request-password-reset", UserController.requestPasswordReset);
+
+// Reset password using code
+router.post("/reset-password", UserController.resetPassword);
+
 module.exports = router;

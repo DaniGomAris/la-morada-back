@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 const logger = require("../utils/logger");
 
 // Connect to MongoDB will using Mongoose
-const connectDB = async () => {
+const connectMongo = async () => {
   try {
     await mongoose.connect(process.env.MONGO_URL, {
       dbName: process.env.DB_NAME,
@@ -14,4 +14,4 @@ const connectDB = async () => {
   }
 };
 
-module.exports = connectDB;
+module.exports = connectMongo;
